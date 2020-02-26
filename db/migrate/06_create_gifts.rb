@@ -6,7 +6,5 @@ class CreateGifts < ActiveRecord::Migration[5.2]
       t.text :name, null: false
       t.timestamps
     end
-    add_foreign_key :users, :gifts
-    add_foreign_key :parties, :gifts
   end
 end

@@ -8,8 +8,5 @@ class CreateParties < ActiveRecord::Migration[5.2]
       t.datetime :end_datetime, null: false
       t.timestamps
     end
-    add_foreign_key :users, :parties
-    add_foreign_key :themes, :parties
-    add_foreign_key :venues, :parties
   end
 end

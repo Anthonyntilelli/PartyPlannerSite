@@ -6,7 +6,5 @@ class CreateInvites < ActiveRecord::Migration[5.2]
       t.boolean :accepted # True accepted, False declined, null no responce.
       t.timestamps
     end
-    add_foreign_key :users, :invites
-    add_foreign_key :parties, :invites
   end
 end
