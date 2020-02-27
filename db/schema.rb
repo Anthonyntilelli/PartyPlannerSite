@@ -60,7 +60,10 @@ ActiveRecord::Schema.define(version: 6) do
 
   create_table "venues", force: :cascade do |t|
     t.text "name", null: false
-    t.text "location", null: false
+    t.integer "zipcode", null: false
+    t.text "state", null: false
+    t.text "city", null: false
+    t.text "street_addr", null: false
     t.boolean "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
