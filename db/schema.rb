@@ -46,12 +46,11 @@ ActiveRecord::Schema.define(version: 6) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.text "first_name", null: false
-    t.text "last_name", null: false
+    t.text "name", null: false
     t.datetime "birthday"
     t.text "email", null: false
     t.text "password_digest", null: false
-    t.boolean "validated", default: false, null: false
+    t.boolean "valid_email", default: false, null: false
     t.boolean "locked", default: false, null: false
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
