@@ -21,6 +21,6 @@ class User < ActiveRecord::Base
   private
 
   def email_not_password
-    errors.add(:password, "must not equal email") if password.downcase == email.downcase
+    errors.add(:password, 'must not equal email') if password&.downcase == email.downcase
   end
 end
