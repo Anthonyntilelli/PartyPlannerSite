@@ -6,5 +6,5 @@ class Venue < ActiveRecord::Base
   # -1 char shortest city name and +5 char largest city name in USA
   validates :city, presence: true, length: { in: 2..50 }
   validates :street_addr, presence: true, uniqueness: { case_sensitive: false }
-  validates :active, presence: true
+  # active validated in DB
 end
