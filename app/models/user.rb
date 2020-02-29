@@ -11,16 +11,21 @@ class User < ActiveRecord::Base
             uniqueness: { case_sensitive: false },
             format: { with: URI::MailTo::EMAIL_REGEXP },
             confirmation: true
-  validates :email_confirmation, presence: true
-  validates :password, presence: true, length: { minimum: 8 }
-  validates :password_confirmation, presence: true
-  validate  :email_not_password
+  validates :email_confirmation, presence: true, if: -> { email_changed? }
+  validates :password,
+            presence: true,
+            length: { minimum: 8 },
+            if: -> { password_digest_changed? }
+  validates :password_confirmation,
+            presence: true,
+            if: -> { password_digest_changed? }
+  validate :email_not_password, if: -> { password_digest_changed? }
   has_secure_password
   # active valid_email, locked, admin validated in DB
 
   private
 
   def email_not_password
-    errors.add(:password, 'must not equal email') if password&.downcase == email.downcase
+    errors.add(:password, 'must not equal email') if password.downcase == email.downcase
   end
 end
