@@ -27,7 +27,7 @@ sp_theme = Theme.create!(name: 'Space', active: true)
 na_theme = Theme.create!(name: 'Nature', active: false)
 tom_user = User.create!(
   name: 'Tom Smith',
-  birthday: '05-01-2001',
+  birthday: '2001-02-28', # yyyy-mm-dd
   email: 'tom@example.com',
   email_confirmation: 'tom@example.com',
   password: 'pw123456',
@@ -47,11 +47,13 @@ amy_user = User.create!(
   admin: false
 )
 tm_party = Party.create!(
+  name: "Tom party",
   user: tom_user,
   venue: fl_venue,
   theme: sp_theme,
-  start_datetime: '05-01-2020',
-  end_datetime: '05-01-2020'
+  event_date: '2020-05-02', # yyyy-mm-dd
+  time_slot: 4
 )
-# tm_invit = Invite.create!(user:amy_user, party:tm_party, accepted: true)
-# tom_gift = Gift.create!(user:amy_user, party:tm_party, name: "Toy Plane")
+tm_invit = Invite.create!(user: amy_user, party: tm_party, accepted: true)
+tom_gift = Gift.create!(user:  amy_user, party: tm_party, name: "Toy Plane")
+tom_gift = Gift.create!(party: tm_party, name: "Toy Plane")

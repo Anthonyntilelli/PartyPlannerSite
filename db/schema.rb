@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 6) do
   create_table "gifts", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.integer "user_id"
     t.integer "party_id", null: false
     t.text "name", null: false
     t.datetime "created_at", null: false
@@ -23,16 +23,18 @@ ActiveRecord::Schema.define(version: 6) do
     t.integer "user_id", null: false
     t.integer "party_id", null: false
     t.boolean "accepted"
+    t.text "internal_name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "parties", force: :cascade do |t|
+    t.string "name", null: false
     t.integer "user_id", null: false
     t.integer "theme_id", null: false
     t.integer "venue_id", null: false
-    t.datetime "start_datetime", null: false
-    t.datetime "end_datetime", null: false
+    t.date "event_date", null: false
+    t.integer "time_slot", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
