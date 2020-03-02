@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Model for Gifts using Active Record
 class Gift < ActiveRecord::Base
   belongs_to :user
   belongs_to :party

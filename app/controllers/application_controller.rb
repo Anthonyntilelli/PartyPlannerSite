@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './config/environment'
 
 class ApplicationController < Sinatra::Base
@@ -6,7 +8,7 @@ class ApplicationController < Sinatra::Base
     set :views, 'app/views'
   end
 
-  get "/" do
+  get '/' do
     erb :welcome
   end
 end

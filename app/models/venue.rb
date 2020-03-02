@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Model for Venues using Active Record
 class Venue < ActiveRecord::Base
   has_many :parties
   validates :name, presence: true, uniqueness: { case_sensitive: false }

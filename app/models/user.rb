@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Model for Users using Active Record
 class User < ActiveRecord::Base
   has_many :invites
   has_many :gifts
@@ -32,7 +33,7 @@ class User < ActiveRecord::Base
 
   # Ensure provided email domain has MX record
   def check_mx_record
-    domain = email.split("@").last
+    domain = email.split('@').last
     results = Resolv::DNS.open { |dns| dns.getresources(domain, Resolv::DNS::Resource::IN::MX) }
     errors.add(:email, 'domain does not support email (no MX record).') if results.empty?
   end

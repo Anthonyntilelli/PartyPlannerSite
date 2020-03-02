@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Model for Parties using Active Record
 class Party < ActiveRecord::Base
   belongs_to :venue
   belongs_to :theme
@@ -40,7 +43,7 @@ class Party < ActiveRecord::Base
 
   def no_other_party_at_same_venu_time_slot_and_event_date
     existing = Party.find_by(venue: venue, time_slot: time_slot, event_date: event_date)
-    if existing && existing.id != id
+    if existing && existing.id != id # rubocop:todo Style/GuardClause
       errors.add(:Another_Party, 'already exists at that venue, date, and time slot.')
     end
   end

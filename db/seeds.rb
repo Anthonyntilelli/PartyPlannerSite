@@ -52,27 +52,27 @@ amy_user = User.create!(
   locked: false,
   admin: false
 )
-puts "Tom Party"
+puts 'Tom Party'
 tm_party = Party.create!(
-  name: "Super Party",
+  name: 'Super Party',
   user: tom_user,
   venue: fl_venue,
   theme: sp_theme,
   event_date: '2020-05-02', # yyyy-mm-dd
   time_slot: 4
 )
-puts "Amy Party (same name)"
-am_party = Party.create!(
-  name: "Super party",
+puts 'Amy Party (same name)'
+Party.create!(
+  name: 'Super party',
   user: amy_user,
   venue: fl_venue,
   theme: sp_theme,
   event_date: '2020-05-02', # yyyy-mm-dd
   time_slot: 3
 )
-puts "Tom invites amy"
-tm_invit = Invite.create!(user: amy_user, party: tm_party, accepted: true)
-puts "Amy's gift"
-tom_gift = Gift.create!(user: amy_user, party: tm_party, name: "Toy Plane")
-puts "Unassigned Gift"
-tom_gift = Gift.create!(party: tm_party, name: "Toy Plane")
+puts 'Tom invites Amy'
+Invite.create!(user: amy_user, party: tm_party, accepted: true)
+puts 'Amy\'s gift'
+Gift.create!(user: amy_user, party: tm_party, name: 'Toy Plane')
+puts 'Unassigned Gift'
+Gift.create!(party: tm_party, name: 'Toy Plane')

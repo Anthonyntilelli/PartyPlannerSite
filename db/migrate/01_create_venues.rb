@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Migration creating veneus table using Active Record
 class CreateVenues < ActiveRecord::Migration[5.2]
   def change
     create_table :venues do |t|
