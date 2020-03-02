@@ -7,6 +7,7 @@ Party.destroy_all
 Invite.destroy_all
 Gift.destroy_all
 
+puts 'Active Venue'
 fl_venue = Venue.create!(
   name: 'Fun Land',
   zipcode: 12_345,
@@ -15,7 +16,8 @@ fl_venue = Venue.create!(
   street_addr: '1234 My Street',
   active: true
 )
-sl_venue = Venue.create!(
+puts 'Inactive Venue'
+Venue.create!(
   name: 'Sad Land',
   zipcode: 12_346,
   state: 'ny',
@@ -23,8 +25,11 @@ sl_venue = Venue.create!(
   street_addr: '1234 My Other Street',
   active: false
 )
+puts 'Active Theme'
 sp_theme = Theme.create!(name: 'Space', active: true)
-na_theme = Theme.create!(name: 'Nature', active: false)
+puts 'Inactive Theme'
+Theme.create!(name: 'Nature', active: false)
+puts 'Tom User'
 tom_user = User.create!(
   name: 'Tom Smith',
   birthday: '2001-02-28', # yyyy-mm-dd
@@ -36,6 +41,7 @@ tom_user = User.create!(
   locked: false,
   admin: true
 )
+puts 'Amy User'
 amy_user = User.create!(
   name: 'Amy Smith',
   email: 'amy@example.com',
@@ -46,14 +52,27 @@ amy_user = User.create!(
   locked: false,
   admin: false
 )
+puts "Tom Party"
 tm_party = Party.create!(
-  name: "Tom party",
+  name: "Super Party",
   user: tom_user,
   venue: fl_venue,
   theme: sp_theme,
   event_date: '2020-05-02', # yyyy-mm-dd
   time_slot: 4
 )
+puts "Amy Party (same name)"
+am_party = Party.create!(
+  name: "Super party",
+  user: amy_user,
+  venue: fl_venue,
+  theme: sp_theme,
+  event_date: '2020-05-02', # yyyy-mm-dd
+  time_slot: 3
+)
+puts "Tom invites amy"
 tm_invit = Invite.create!(user: amy_user, party: tm_party, accepted: true)
-tom_gift = Gift.create!(user:  amy_user, party: tm_party, name: "Toy Plane")
+puts "Amy's gift"
+tom_gift = Gift.create!(user: amy_user, party: tm_party, name: "Toy Plane")
+puts "Unassigned Gift"
 tom_gift = Gift.create!(party: tm_party, name: "Toy Plane")

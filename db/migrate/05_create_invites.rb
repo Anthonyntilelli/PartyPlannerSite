@@ -4,7 +4,6 @@ class CreateInvites < ActiveRecord::Migration[5.2]
       t.integer :user_id, null: false
       t.integer :party_id, null: false
       t.boolean :accepted # True accepted, False declined, null no responce.
-      t.text :internal_name, null: false
       t.timestamps
     end
   end

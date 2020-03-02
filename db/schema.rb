@@ -23,7 +23,6 @@ ActiveRecord::Schema.define(version: 6) do
     t.integer "user_id", null: false
     t.integer "party_id", null: false
     t.boolean "accepted"
-    t.text "internal_name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

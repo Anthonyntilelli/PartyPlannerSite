@@ -9,7 +9,8 @@ class Party < ActiveRecord::Base
   validates_associated :venue
   validates_associated :user
 
-  validates :name, presence: true, uniqueness: { case_sensitive: false }
+  # Each User must have unique party names
+  validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :user_id }
   validates :user, presence: true
   validates :venue, presence: true
   validates :theme, presence: true
@@ -19,12 +20,11 @@ class Party < ActiveRecord::Base
             numericality: { greater_than: 0, less_than: 5 }
   validate :active_theme_and_venue
   validate :correct_time
-
-  # TODO: (LATER) validate venue time is free/other conflicting parties
+  validate :no_other_party_at_same_venu_time_slot_and_event_date
 
   private
 
-  # Venue  and Theme must be active
+  # Venue and Theme must be active
   def active_theme_and_venue
     errors.add(:theme, 'must be active') unless theme.active
     errors.add(:venue, 'must be active') unless venue.active
@@ -36,5 +36,12 @@ class Party < ActiveRecord::Base
     max = Date.current + 1.year
     errors.add(:event_date, "must be set after #{min}") unless min < event_date
     errors.add(:event_date, "must be set before #{max}") unless max > event_date
+  end
+
+  def no_other_party_at_same_venu_time_slot_and_event_date
+    existing = Party.find_by(venue: venue, time_slot: time_slot, event_date: event_date)
+    if existing && existing.id != id
+      errors.add(:Another_Party, 'already exists at that venue, date, and time slot.')
+    end
   end
 end
