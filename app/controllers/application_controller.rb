@@ -9,6 +9,9 @@ class ApplicationController < Sinatra::Base
   end
 
   get '/' do
+    @title = 'TODO: Frontpage'
+    @header_text = 'TODO: Frontpage'
+    @follow_up_paragraph = 'Follow up frontpage text'
     erb :welcome
   end
 end
