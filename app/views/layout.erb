@@ -1,32 +1,64 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-
-    <title>PartyPlannerSite</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="stylesheet" href="/stylesheets/main.css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title><%=@title%></title>
+    <meta name="author" content="Anthony Tilelli">
+    <meta name="description" content="A Sinatra demo project created for Flatiron bootcamp">
+    <meta name="keywords" content="flatIron,party planner,party,demo,sintra,">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="/stylesheets/normalize.css" >
+    <link rel="stylesheet" href="/stylesheets/layout_style.css" >
   </head>
   <body>
+    <header>
+      <h1><%=@header_text%></h2>
+      <p><%=@follow_up_paragraph%></p>
+    </header>
+    <nav class='flex-container'>
+        <div class="dropdown">
+          <p class='dropdown-top'>Home</p>
+          <div class="dropdown-content">
+            <div><a href="#">Link 1</a></div>
+            <div><a href="#">Link 2</a></div>
+            <div><a href="#">Link 3</a></div>
+          </div>
+        </div>
+        <div class="dropdown">
+          <div class='dropdown-top'><p>Parties</p></div>
+          <div class="dropdown-content">
+            <div><a href="#">Link 1</a></div>
+            <div><a href="#">Link 2</a></div>
+            <div><a href="#">Link 3</a></div>
+          </div>
+        </div>
+        <div class="dropdown">
+          <div class='dropdown-top'><p>Present</p></div>
+          <div class="dropdown-content">
+            <div><a href="#">Link 1</a></div>
+            <div><a href="#">Link 2</a></div>
+            <div><a href="#">Link 3</a></div>
+          </div>
+        </div>
+        <div class="dropdown">
+          <div class='dropdown-top'><p>profile</p></div>
+          <div class="dropdown-content">
+            <div><a href="#">Link 1</a></div>
+            <div><a href="#">Link 2</a></div>
+            <div><a href="#">Link 3</a></div>
+          </div>
+        </div>
+        <button class="dropbtn">Signout</button>
+    </nav>
+
     <div class="wrapper">
-
-        <%= yield %>
-
-      <footer class="branding">
-        <small>&copy; 2020 <strong>PartyPlannerSite</strong></small>
-      </footer>
+      <%= yield %>
     </div>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-    <!--[if lt IE 7]>
-      <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>
-      <script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>
-    <![endif]-->
+    <footer class="branding">
+      <small>&copy; 2020 <strong>PartyPlannerSite</strong></small>
+    </footer>
   </body>
 </html>
