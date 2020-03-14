@@ -3,6 +3,7 @@
 ENV['SINATRA_ENV'] ||= 'development'
 
 require 'bundler/setup'
+require 'sinatra/flash'
 require 'resolv'
 Bundler.require(:default, ENV['SINATRA_ENV'])
 

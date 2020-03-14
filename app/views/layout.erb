@@ -53,6 +53,12 @@
         <button class="dropbtn">Signout</button>
     </nav>
 
+    <% if defined? flash %>
+      <% flash.keys.each do |type| %>
+        <p  class="flash-<%= type %>" ><%= flash[type] %></p>
+      <% end %>
+    <% end %>
+
     <div class="wrapper">
       <%= yield %>
     </div>

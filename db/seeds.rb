@@ -32,7 +32,6 @@ Theme.create!(name: 'Nature', active: false)
 puts 'Tom User'
 tom_user = User.create!(
   name: 'Tom Smith',
-  birthday: '2001-02-28', # yyyy-mm-dd
   email: 'tom@example.com',
   email_confirmation: 'tom@example.com',
   password: 'pw123456',

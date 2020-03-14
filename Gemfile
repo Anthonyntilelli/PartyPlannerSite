@@ -7,6 +7,7 @@ gem 'rake'
 gem 'require_all'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
+gem 'sinatra-flash'
 gem 'sqlite3', '~> 1.3.6'
 gem 'thin'
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 6) do
+ActiveRecord::Schema.define(version: 7) do
 
   create_table "gifts", force: :cascade do |t|
     t.integer "user_id"
@@ -48,7 +48,6 @@ ActiveRecord::Schema.define(version: 6) do
 
   create_table "users", force: :cascade do |t|
     t.text "name", null: false
-    t.datetime "birthday"
     t.text "email", null: false
     t.text "password_digest", null: false
     t.boolean "valid_email", default: false, null: false

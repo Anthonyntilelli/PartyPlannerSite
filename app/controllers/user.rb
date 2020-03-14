@@ -7,7 +7,8 @@ class UserController < Sinatra::Base
     set :views, 'app/views'
     use Rack::MethodOverride # Method overwrite
     enable :sessions
-    set :session_secret, "secret"
+    set :session_secret, 'secret'
+    register Sinatra::Flash
   end
 
   # User can log-in (password less log in also??)
@@ -18,15 +19,32 @@ class UserController < Sinatra::Base
 
   # User can signup
   get '/user/signup' do
+    @title = 'Welcome to the party'
+    @header_text = 'Party Planning, inc'
+    @follow_up_paragraph = 'Best Place to Schedule your Party!'
     erb :"user/signup"
   end
 
   post '/user/signup' do
-    # CGI::escapeHTML(params["email"])
-    # Rack::Utils.escape_html("quote ' double quotes \"")
-    # params['name']
-    # binding.pry
-    erb :welcome
+    begin
+      # TODO: Sanitize Input
+      User.create!(
+        name: params['name'],
+        email: params['email'],
+        email_confirmation: params['email_confirmation'],
+        password: params['password'],
+        password_confirmation: params['password_confirmation'],
+        valid_email: false,
+        locked: true,
+        admin: false
+      )
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:SUCCESS] = e.message
+      redirect "/user/signup"
+    end
+    # TODO: Send email validation for user accound
+    flash[:SUCCESS] = "Signup Successfull: Welcome #{params["name"]}, please view your email for confirm link."
+    redirect '/'
   end
 
   # User can view Profile
