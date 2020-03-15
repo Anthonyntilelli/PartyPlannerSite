@@ -35,7 +35,6 @@ class UserController < Sinatra::Base
         email_confirmation: params['email_confirmation'],
         password: params['password'],
         password_confirmation: params['password_confirmation'],
-        valid_email: false,
         locked: true,
         admin: false
       )
@@ -61,14 +60,14 @@ class UserController < Sinatra::Base
   post '/user/login' do
     user = User.find_by(email: params['email'])
     if user&.authenticate(params['password'])
-      if !user.locked && user.valid_email
+      if !user.locked
         session['user_id'] = user.id
         session['login_time'] = Time.now.utc.to_s
         redirect to '/', 200
       else
         session['user_id'] = nil
         session['login_time'] = nil
-        flash[:ERROR] = 'Email is locked or email is not verified, please click \'Forgot my password\' to unlock'
+        flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
         redirect to '/user/login', 401
       end
     else
