@@ -17,4 +17,9 @@ class ApplicationController < Sinatra::Base
     @follow_up_paragraph = 'Best Place to Schedule your Party!'
     erb :welcome
   end
+
+  # get "/pry" do
+  #   binding.pry
+  # end
+
 end

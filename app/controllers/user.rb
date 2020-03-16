@@ -40,7 +40,7 @@ class UserController < Sinatra::Base
       )
     rescue ActiveRecord::RecordInvalid => e
       flash[:ERROR] = e.message
-      redirect '/user/signup'
+      redirect '/user/signup', 400
     end
     # TODO: Send email validation for user accound
     flash[:SUCCESS] = "Signup Successfull: Welcome #{params['name']}, please view your email for confirm link."
@@ -84,15 +84,47 @@ class UserController < Sinatra::Base
     redirect to '/', 200
   end
 
-  # # User can view Profile
-  # get '/user/profile/:id' do
-  # end
+  # User can view Profile
+  get '/user/me' do
+    if session['user_id'].nil?
+      flash[:ERROR] = "Please log in to see profile"
+      redirect to '/', 401
+    end
+    user = User.find(session['user_id'])
+    @name = user.name
+    erb :"/user/profile"
+  end
 
-  # # User can update Profile
-  # patch '/user/profile/:id' do
-  # end
+  # User can update Profile
+  patch '/user/me' do
+    if session['user_id'].nil?
+      flash[:ERROR] = "Please log in to see profile"
+      redirect to '/', 401
+    end
+    user = User.find(session['user_id'])
+    if params["reset_password"]
+      if user&.authenticate(params['current_password'])
+        begin
+          user.update(
+            password: params['new_password'],
+            password_confirmation: params['new_confirm_password']
+          )
+        rescue ActiveRecord::RecordInvalid => e
+          flash[:ERROR] = e.message
+          redirect '/user/me', 400
+        else
+          flash[:SUCCESS] = 'Password update Successfull.'
+        end
+      else
+        flash[:ERROR] = "Incorrect current password"
+        redirect to '/user/me', 403
+      end
+    end
+    user.save
+    redirect to '/user/me', 200
+  end
 
-  # Reset Password
+  # Reset Password when forgot
   # get '/user/forgot_password' do
   # end
 end
