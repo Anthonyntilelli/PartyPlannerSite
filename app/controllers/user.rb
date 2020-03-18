@@ -120,6 +120,18 @@ class UserController < Sinatra::Base
         redirect to '/user/me', 403
       end
     end
+
+    if params['change_name']
+      begin
+        user.update!(name: params['new_name'])
+      rescue ActiveRecord::RecordInvalid => e
+        flash[:ERROR] = e.message
+        redirect to '/user/me', 400
+      else
+        flash[:SUCCESS] = 'Name update Successfull.'
+      end
+    end
+
     user.save
     redirect to '/user/me', 200
   end
