@@ -12,9 +12,6 @@ class ApplicationController < Sinatra::Base
   end
 
   get '/' do
-    @title = 'Party Planning, inc'
-    @header_text = 'Party Planning, inc'
-    @follow_up_paragraph = 'Best Place to Schedule your Party!'
     erb :welcome
   end
 

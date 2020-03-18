@@ -19,9 +19,8 @@ class UserController < Sinatra::Base
 
   # User signup Page
   get '/user/signup' do
-    @title = 'Welcome to the party'
-    @header_text = 'Party Planning, inc'
-    @follow_up_paragraph = 'Best Place to Schedule your Party!'
+    # already logged in
+    redirect to '/' if session['user_id']
     erb :"user/signup"
   end
 
@@ -48,10 +47,8 @@ class UserController < Sinatra::Base
 
   # User Log-in
   get '/user/login' do
+    # already logged in
     redirect to '/' if session['user_id']
-    @title = 'Welcome to the party'
-    @header_text = 'Party Planning, inc'
-    @follow_up_paragraph = 'Best Place to Schedule your Party!'
     erb :"user/login"
   end
 
