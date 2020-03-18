@@ -87,7 +87,7 @@ class UserController < Sinatra::Base
   # User can view Profile
   get '/user/me' do
     if session['user_id'].nil?
-      flash[:ERROR] = "Please log in to see profile"
+      flash[:ERROR] = 'Please log in to see profile'
       redirect to '/', 401
     end
     user = User.find(session['user_id'])
@@ -98,25 +98,25 @@ class UserController < Sinatra::Base
   # User can update Profile
   patch '/user/me' do
     if session['user_id'].nil?
-      flash[:ERROR] = "Please log in to see profile"
+      flash[:ERROR] = 'Please log in to see profile'
       redirect to '/', 401
     end
     user = User.find(session['user_id'])
-    if params["reset_password"]
+    if params['change_password']
       if user&.authenticate(params['current_password'])
         begin
-          user.update(
+          user.update!(
             password: params['new_password'],
             password_confirmation: params['new_confirm_password']
           )
         rescue ActiveRecord::RecordInvalid => e
           flash[:ERROR] = e.message
-          redirect '/user/me', 400
+          redirect to '/user/me', 400
         else
           flash[:SUCCESS] = 'Password update Successfull.'
         end
       else
-        flash[:ERROR] = "Incorrect current password"
+        flash[:ERROR] = 'Incorrect current password'
         redirect to '/user/me', 403
       end
     end
