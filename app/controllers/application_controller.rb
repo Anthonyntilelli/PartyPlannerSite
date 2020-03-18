@@ -18,8 +18,7 @@ class ApplicationController < Sinatra::Base
     erb :welcome
   end
 
-  # get "/pry" do
+  # get '/pry' do
   #   binding.pry
   # end
-
 end

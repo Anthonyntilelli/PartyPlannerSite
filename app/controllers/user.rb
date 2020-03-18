@@ -16,7 +16,6 @@ class UserController < Sinatra::Base
   # User can reset their account
   # User can verify email owernship
   # User can update recover their account, if locked or forgotten password
-  # User can delete their account
 
   # User signup Page
   get '/user/signup' do
@@ -102,6 +101,7 @@ class UserController < Sinatra::Base
       redirect to '/', 401
     end
     user = User.find(session['user_id'])
+
     if params['change_password']
       if user&.authenticate(params['current_password'])
         begin
@@ -134,6 +134,24 @@ class UserController < Sinatra::Base
 
     user.save
     redirect to '/user/me', 200
+  end
+
+  # Delete user account
+  delete '/user/me' do
+    if session['user_id'].nil?
+      flash[:ERROR] = 'Please log in to see profile'
+      redirect to '/', 401
+    end
+    user = User.find(session['user_id'])
+    if user&.authenticate(params['current_password'])
+      user.destroy
+      session.clear
+      flash[:SUCCESS] = 'User Destroyed.'
+      redirect to "/", 200
+    else
+      flash[:ERROR] = 'Incorrect password, aborting deletion'
+      redirect to '/user/me', 403
+    end
   end
 
   # Reset Password when forgot
