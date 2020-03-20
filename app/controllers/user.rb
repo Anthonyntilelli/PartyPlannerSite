@@ -20,7 +20,7 @@ class UserController < Sinatra::Base
   # User signup Page
   get '/user/signup' do
     # already logged in
-    redirect to '/' if session['user_id']
+    redirect_if_logged_in
     erb :"user/signup"
   end
 
@@ -48,7 +48,7 @@ class UserController < Sinatra::Base
   # User Log-in
   get '/user/login' do
     # already logged in
-    redirect to '/' if session['user_id']
+    redirect_if_logged_in
     erb :"user/login"
   end
 
@@ -82,27 +82,17 @@ class UserController < Sinatra::Base
 
   # User can view Profile
   get '/user/me' do
-    if session['user_id'].nil?
-      flash[:ERROR] = 'Please log in to see profile'
-      redirect to '/', 401
-    end
-    user = User.find(session['user_id'])
-    @name = user.name
+    require_login
     erb :"/user/profile"
   end
 
   # User can update Profile
   patch '/user/me' do
-    if session['user_id'].nil?
-      flash[:ERROR] = 'Please log in to see profile'
-      redirect to '/', 401
-    end
-    user = User.find(session['user_id'])
-
+    require_login
     if params['change_password']
-      if user&.authenticate(params['current_password'])
+      if @user&.authenticate(params['current_password'])
         begin
-          user.update!(
+          @user.update!(
             password: params['new_password'],
             password_confirmation: params['new_confirm_password']
           )
@@ -120,7 +110,7 @@ class UserController < Sinatra::Base
 
     if params['change_name']
       begin
-        user.update!(name: params['new_name'])
+        @user.update!(name: params['new_name'])
       rescue ActiveRecord::RecordInvalid => e
         flash[:ERROR] = e.message
         redirect to '/user/me', 400
@@ -129,19 +119,15 @@ class UserController < Sinatra::Base
       end
     end
 
-    user.save
+    @user.save
     redirect to '/user/me', 200
   end
 
   # Delete user account
   delete '/user/me' do
-    if session['user_id'].nil?
-      flash[:ERROR] = 'Please log in to see profile'
-      redirect to '/', 401
-    end
-    user = User.find(session['user_id'])
-    if user&.authenticate(params['current_password'])
-      user.destroy
+    require_login
+    if @user&.authenticate(params['current_password'])
+      @user.destroy
       session.clear
       flash[:SUCCESS] = 'User Destroyed.'
       redirect to "/", 200
@@ -154,4 +140,20 @@ class UserController < Sinatra::Base
   # Reset Password when forgot
   # get '/user/forgot_password' do
   # end
+  helpers do
+    # Test for valid logged in user and sets @user
+    def require_login
+      if session['user_id'] && User.find_by_id(session[:user_id])
+        @user = User.find_by_id(session[:user_id])
+      else
+        session.clear
+        flash[:ERROR] = 'Please log in'
+        redirect to '/user/login', 401
+      end
+    end
+
+    def redirect_if_logged_in
+      redirect to '/' if session['user_id']
+    end
+  end
 end
