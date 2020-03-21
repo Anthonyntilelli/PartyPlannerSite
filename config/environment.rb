@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+raise 'Missing Send Grid key from ENV' unless ENV['SENDGRID_API_KEY']
+
 ENV['SINATRA_ENV'] ||= 'development'
 
 require 'bundler/setup'

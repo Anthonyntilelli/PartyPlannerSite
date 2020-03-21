@@ -15,6 +15,15 @@ class ApplicationController < Sinatra::Base
     erb :welcome
   end
 
+  # get '/send_email' do
+  #   SendEmailUtil.send_email(
+  #     'anthony@tilelli.me',
+  #     'Test email from send_email',
+  #     "I am the body from send_email\n"
+  #   )
+  #   erb :welcome
+  # end
+
   # get '/pry' do
   #   binding.pry
   # end
