@@ -27,7 +27,7 @@ class UserController < Sinatra::Base
   # Create User account
   post '/user/signup' do
     begin
-      User.create!(
+      user = User.create!(
         name: params['name'],
         email: params['email'],
         email_confirmation: params['email_confirmation'],
@@ -36,14 +36,43 @@ class UserController < Sinatra::Base
         locked: true,
         admin: false
       )
+      verify_link = HmacUtils.gen_url(
+        $HOST + "/user/verify/#{user.id}",
+        { 'expires' => (Time.now.utc + 2.hours).to_s, 'email' => user.email }
+      )
+
+      email_body = <<-BODY
+
+      Please click below to start using party Planner (Link expires in 2 hours).
+      #{verify_link}
+      You’re receiving this email because you signed up for Party Planner.
+      This is an automated email.
+
+      BODY
+
+      # Send email validation for user account
+      # TODO: Non-blocking call/open in second tread?
+      EmailUtil.send_email(
+        user.email,
+        'Welcome to the party: Please verify you user account.',
+        email_body
+      )
     rescue ActiveRecord::RecordInvalid => e
       flash[:ERROR] = e.message
-      redirect '/user/signup', 400
+      redirect to '/user/signup', 400
     end
-    # TODO: Send email validation for user account
     flash[:SUCCESS] = "Signup Successfull: Welcome #{params['name']}, please view your email for confirm link."
-    redirect '/'
+    redirect to '/'
   end
+
+  # Verify email owernship
+  get '/user/verify/:id'
+  # 1 validate hmac
+  # 2 check expiration
+  # 3 does email match id?
+  # 4 unlock account
+  end
+
 
   # User Log-in
   get '/user/login' do

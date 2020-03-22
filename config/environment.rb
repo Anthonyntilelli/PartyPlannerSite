@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+$HOST = '127.0.0.1:9393'
 raise 'Missing Send Grid key from ENV' unless ENV['SENDGRID_API_KEY']
 raise 'Missing URL HMAC  key from ENV' unless ENV['HMAC_URl_KEY']
 

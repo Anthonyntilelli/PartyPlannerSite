@@ -24,16 +24,16 @@ class ApplicationController < Sinatra::Base
   #   erb :welcome
   # end
 
-  get '/pry' do
-    binding.pry
-  end
+  # get '/pry' do
+  #   binding.pry
+  # end
 
-  get "/hmac" do
-    HmacUtils.gen_url('/vhmac', params.to_h)
-  end
+  # get '/hmac' do
+  #   HmacUtils.gen_url($HOST + '/vhmac', params.to_h)
+  # end
 
-  get '/vhmac' do
-    valid = HmacUtils.valid_url?(request.path, params.to_h)
-    return "Result = #{valid}"
-  end
+  # get '/vhmac' do
+  #   valid = HmacUtils.valid_url?($HOST + request.path, params.to_h)
+  #   return "Result = #{valid}"
+  # end
 end
