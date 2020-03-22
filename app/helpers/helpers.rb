@@ -41,11 +41,19 @@ module HmacUtils
 
   # path - request.path
   # params_hash to be added to query string
-  # def self.valid_url?(path, params_hash)
-  #  raise 'params_hash missing salt key' unless args_hash['salt']
-  #  raise 'params_hash missing hmac key' unless args_hash['hmac']
-  #   # TODO:
-  # end
+  # return false if salt or hmac parms are missing
+  # returns if hmac matches path + params.
+  def self.valid_url?(path, params_hash)
+    # Must be false if salt or hmac are missing
+    return false unless params_hash['salt']
+    return false unless params_hash['hmac']
+
+    claimed_hmac = params_hash.delete('hmac')
+    salt = params_hash['salt']
+    url = make_sorted_query_string(path, params_hash, salt)
+    calculated_hmac = gen_hmac(url, salt)
+    claimed_hmac == calculated_hmac
+  end
 
   private_class_method def self.make_sorted_query_string(path, args_hash, salt)
     args_hash['salt'] = salt

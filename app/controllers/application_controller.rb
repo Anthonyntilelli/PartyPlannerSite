@@ -29,6 +29,11 @@ class ApplicationController < Sinatra::Base
   end
 
   get "/hmac" do
-    HmacUtils.gen_url(request.path, params.to_h)
+    HmacUtils.gen_url('/vhmac', params.to_h)
+  end
+
+  get '/vhmac' do
+    valid = HmacUtils.valid_url?(request.path, params.to_h)
+    return "Result = #{valid}"
   end
 end
