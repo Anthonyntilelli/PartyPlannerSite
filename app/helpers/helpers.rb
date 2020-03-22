@@ -25,21 +25,36 @@ module HmacUtils
   HMAC_KEY = ENV['HMAC_URl_KEY']
   DIGEST = OpenSSL::Digest.new('sha256')
 
-  # path - with out http or https
-  # arg_hash to be added to query string
+  # path - request.path
+  # args_hash to be added to query string
   # return url with hmac
-  def self.gen_url(path, arg_hash)
+  def self.gen_url(path, args_hash)
     # Sorting arg hash by key (hmacs are order sensative)
-    raise 'arg_hash cannot have salt key' unless arg_hash['salt'].nil? && arg_hash[:salt].nil?
-    raise 'arg_hash cannot have hmac key' unless arg_hash['hmac'].nil? && arg_hash[:hmac].nil?
+    raise 'args_hash cannot have salt key' if args_hash['salt'] || args_hash[:salt]
+    raise 'args_hash cannot have hmac key' if args_hash['hmac'] || args_hash[:hmac]
 
-    arg_hash['salt'] = SecureRandom.urlsafe_base64(5)
-    url = path + '?' + URI.encode_www_form(arg_hash.sort_by { |k, _v| k }.to_h)
+    salt = SecureRandom.urlsafe_base64(5)
+    url = make_sorted_query_string(path, args_hash, salt)
     # append hmac to url
-    hmac = OpenSSL::HMAC.hexdigest(DIGEST, arg_hash['salt'] + HMAC_KEY, url)
-    url + '&' + URI.encode_www_form({ 'hmac' => hmac })
+    url + '&' + URI.encode_www_form({ 'hmac' => gen_hmac(url, salt) })
   end
 
-  def self.verify_url(url)
+  # path - request.path
+  # params_hash to be added to query string
+  # def self.valid_url?(path, params_hash)
+  #  raise 'params_hash missing salt key' unless args_hash['salt']
+  #  raise 'params_hash missing hmac key' unless args_hash['hmac']
+  #   # TODO:
+  # end
+
+  private_class_method def self.make_sorted_query_string(path, args_hash, salt)
+    args_hash['salt'] = salt
+    # Sorting arg hash by key (hmacs are order sensative)
+    path + '?' + URI.encode_www_form(args_hash.sort_by { |k, _v| k }.to_h)
+  end
+
+  private_class_method def self.gen_hmac(url, salt)
+    salted_key = salt + HMAC_KEY
+    OpenSSL::HMAC.hexdigest(DIGEST, salted_key, url)
   end
 end
