@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require 'sendgrid-ruby'
-
-# Send email via helper
-module SendEmailUtil
+# Send email using sendgrid
+module EmailUtil
   include SendGrid
   SG = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
   # to_address string email address
@@ -22,4 +20,26 @@ module SendEmailUtil
   end
 end
 
-# helpers SendEmailUtil
+# Create and verift hmac url
+module HmacUtils
+  HMAC_KEY = ENV['HMAC_URl_KEY']
+  DIGEST = OpenSSL::Digest.new('sha256')
+
+  # path - with out http or https
+  # arg_hash to be added to query string
+  # return url with hmac
+  def self.gen_url(path, arg_hash)
+    # Sorting arg hash by key (hmacs are order sensative)
+    raise 'arg_hash cannot have salt key' unless arg_hash['salt'].nil? && arg_hash[:salt].nil?
+    raise 'arg_hash cannot have hmac key' unless arg_hash['hmac'].nil? && arg_hash[:hmac].nil?
+
+    arg_hash['salt'] = SecureRandom.urlsafe_base64(5)
+    url = path + '?' + URI.encode_www_form(arg_hash.sort_by { |k, _v| k }.to_h)
+    # append hmac to url
+    hmac = OpenSSL::HMAC.hexdigest(DIGEST, arg_hash['salt'] + HMAC_KEY, url)
+    url + '&' + URI.encode_www_form({ 'hmac' => hmac })
+  end
+
+  def self.verify_url(url)
+  end
+end

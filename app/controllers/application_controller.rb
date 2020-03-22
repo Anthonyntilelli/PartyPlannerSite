@@ -16,7 +16,7 @@ class ApplicationController < Sinatra::Base
   end
 
   # get '/send_email' do
-  #   SendEmailUtil.send_email(
+  #   EmailUtil.send_email(
   #     'anthony@tilelli.me',
   #     'Test email from send_email',
   #     "I am the body from send_email\n"
@@ -26,5 +26,6 @@ class ApplicationController < Sinatra::Base
 
   # get '/pry' do
   #   binding.pry
+  #   # HmacUrl.gen_url(request.host + ':9393' + request.path, params.to_h)
   # end
 end
