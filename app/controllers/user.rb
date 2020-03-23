@@ -29,8 +29,8 @@ class UserController < Sinatra::Base
     begin
       user = User.create!(
         name: params['name'],
-        email: params['email'],
-        email_confirmation: params['email_confirmation'],
+        email: params['email'].downcase,
+        email_confirmation: params['email_confirmation'].downcase,
         password: params['password'],
         password_confirmation: params['password_confirmation'],
         locked: true,
@@ -66,11 +66,27 @@ class UserController < Sinatra::Base
   end
 
   # Verify email owernship
-  get '/user/verify/:id'
-  # 1 validate hmac
-  # 2 check expiration
-  # 3 does email match id?
-  # 4 unlock account
+  get '/user/verify/:id' do |id|
+    query = params.to_h
+    query.delete('id') # 'id' was not in original params
+    unless HmacUtils.valid_url?($HOST + request.path, query)
+      flash[:ERROR] = 'Invalid Link'
+      redirect to '/', 403
+    end
+    # Expired?
+    unless Time.now.utc <= Time.parse(query['expires'])
+      flash[:ERROR] = 'link expired'
+      redirect to '/', 403
+    end
+    # Valid User?
+    user = User.find_by_id(id)
+    if user.email == query['email']
+      user.locked = false if user.locked
+      user.save if user.changed?
+      redirect to '/', 200
+    end
+    flash[:ERROR] = 'Invalid user'
+    redirect to '/', 403
   end
 
 
@@ -93,11 +109,11 @@ class UserController < Sinatra::Base
         session['user_id'] = nil
         session['login_time'] = nil
         flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
-        redirect to '/user/login', 401
+        redirect to '/user/login', 403
       end
     else
       flash[:ERROR] = 'Incorrect User or Password'
-      redirect to '/user/login', 401
+      redirect to '/user/login', 403
     end
     halt 404
   end
@@ -168,7 +184,7 @@ class UserController < Sinatra::Base
       else
         session.clear
         flash[:ERROR] = 'Please log in'
-        redirect to '/user/login', 401
+        redirect to '/user/login', 403
       end
     end
 
