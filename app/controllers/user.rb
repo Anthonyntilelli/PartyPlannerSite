@@ -89,7 +89,6 @@ class UserController < Sinatra::Base
     redirect to '/', 403
   end
 
-
   # User Log-in
   get '/user/login' do
     # already logged in
