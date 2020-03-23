@@ -12,10 +12,6 @@ class UserController < Sinatra::Base
   end
 
   # TODO: Sanitize Input
-  # passwordless log in also??
-  # User can reset their account
-  # User can verify email owernship
-  # User can update recover their account, if locked or forgotten password
 
   # User signup Page
   get '/user/signup' do
@@ -33,6 +29,7 @@ class UserController < Sinatra::Base
         email_confirmation: params['email_confirmation'].downcase,
         password: params['password'],
         password_confirmation: params['password_confirmation'],
+        allow_passwordless: params['passwordless'] == 'yes',
         locked: true,
         admin: false
       )
@@ -65,7 +62,7 @@ class UserController < Sinatra::Base
     redirect to '/'
   end
 
-  # Verify email owernship
+  # Verify email owernship after signup
   get '/user/verify/:id' do |id|
     query = params.to_h
     query.delete('id') # 'id' was not in original params
@@ -89,12 +86,17 @@ class UserController < Sinatra::Base
     redirect to '/', 403
   end
 
-  # User Log-in
+  # User Login
   get '/user/login' do
-    # already logged in
-    redirect_if_logged_in
+    redirect_if_logged_in # already logged in
     erb :"user/login"
   end
+
+  # # User password Login
+  # get '/user/login/passwordless' do
+  #   redirect_if_logged_in # already logged in
+  #   erb :"user/login_passwordless"
+  # end
 
   # Authenticate User
   post '/user/login' do
@@ -116,6 +118,14 @@ class UserController < Sinatra::Base
     end
     halt 404
   end
+
+  # Start password login
+  # post '/user/login/passwordless' do
+  # end
+
+  # # Authenite User Passwordless
+  # get '/user/login/passwordless/:id' do |id|
+  # end
 
   # Logout and clears session
   get '/user/logout' do
@@ -157,7 +167,18 @@ class UserController < Sinatra::Base
       flash[:SUCCESS] = 'Name update Successfull.'
     end
 
-    @user.save
+    if params['change_passwordless']
+      require_reauthenticate
+      begin
+        @user.update!(allow_passwordless: params['passwordless'] == 'yes')
+      rescue ActiveRecord::RecordInvalid => e
+        flash[:ERROR] = e.message
+        redirect to '/user/me', 400
+      end
+      flash[:SUCCESS] = "Passwordless update to #{@user.allow_passwordless ? 'Enabled' : 'Disabled'}."
+    end
+
+    @user.save user.save if @user.changed?
     redirect to '/user/me', 200
   end
 

@@ -24,9 +24,9 @@ class ApplicationController < Sinatra::Base
   #   erb :welcome
   # end
 
-  # get '/pry' do
-  #   binding.pry
-  # end
+  get '/pry' do
+    binding.pry
+  end
 
   # get '/hmac' do
   #   HmacUtils.gen_url($HOST + '/vhmac', params.to_h)
