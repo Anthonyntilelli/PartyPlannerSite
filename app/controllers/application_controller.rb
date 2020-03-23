@@ -29,7 +29,7 @@ class ApplicationController < Sinatra::Base
   end
 
   # get '/hmac' do
-  #   HmacUtils.gen_url($HOST + '/vhmac', params.to_h)
+  #   HmacUtils.gen_url($HOST + '/vhmac', params.to_h, 4)
   # end
 
   # get '/vhmac' do

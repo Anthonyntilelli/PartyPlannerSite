@@ -33,11 +33,7 @@ class UserController < Sinatra::Base
         locked: true,
         admin: false
       )
-      verify_link = HmacUtils.gen_url(
-        $HOST + "/user/verify/#{user.id}",
-        { 'expires' => (Time.now.utc + 2.hours).to_s, 'email' => user.email }
-      )
-
+      verify_link = HmacUtils.gen_url( $HOST + "/user/verify/#{user.id}", {'email' => user.email }, 120)
       email_body = <<-BODY
 
       Please click below to start using party Planner (Link expires in 2 hours).
@@ -48,7 +44,6 @@ class UserController < Sinatra::Base
       BODY
 
       # Send email validation for user account
-      # TODO: Non-blocking call/open in second tread?
       EmailUtil.send_email(
         user.email,
         'Welcome to the party: Please verify you user account.',
@@ -67,12 +62,7 @@ class UserController < Sinatra::Base
     query = params.to_h
     query.delete('id') # 'id' was not in original params
     unless HmacUtils.valid_url?($HOST + request.path, query)
-      flash[:ERROR] = 'Invalid Link'
-      redirect to '/', 403
-    end
-    # Expired?
-    unless Time.now.utc <= Time.parse(query['expires'])
-      flash[:ERROR] = 'link expired'
+      flash[:ERROR] = 'Invalid Link or Expired'
       redirect to '/', 403
     end
     # Valid User?

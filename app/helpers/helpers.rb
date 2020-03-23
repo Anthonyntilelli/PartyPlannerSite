@@ -26,37 +26,42 @@ module HmacUtils
   DIGEST = OpenSSL::Digest.new('sha256')
 
   # path - request.path
-  # args_hash to be added to query string
+  # args_hash - to be added to query string
+  # expire_min (integer) - number minutes from now link is valid for
   # return url with hmac
-  def self.gen_url(path, args_hash)
+  def self.gen_url(path, args_hash, expire_min)
     # Sorting arg hash by key (hmacs are order sensative)
-    raise 'args_hash cannot have salt key' if args_hash['salt'] || args_hash[:salt]
-    raise 'args_hash cannot have hmac key' if args_hash['hmac'] || args_hash[:hmac]
+    raise 'args_hash cannot have salt key' if args_hash['salt']
+    raise 'args_hash cannot have hmac key' if args_hash['hmac']
+    raise 'args_hash cannot have expire key' if args_hash['expires']
 
     salt = SecureRandom.urlsafe_base64(5)
-    url = make_sorted_query_string(path, args_hash, salt)
+    url = make_sorted_query_string(path, args_hash, salt, expire_min)
     # append hmac to url
     url + '&' + URI.encode_www_form({ 'hmac' => gen_hmac(url, salt) })
   end
 
   # path - request.path
   # params_hash to be added to query string
-  # return false if salt or hmac parms are missing
-  # returns if hmac matches path + params.
+  # return false if salt, expire or hmac parms are missing
+  # returns if hmac matches path + params and link has not expired
   def self.valid_url?(path, params_hash)
     # Must be false if salt or hmac are missing
     return false unless params_hash['salt']
     return false unless params_hash['hmac']
+    return false unless params_hash['expire']
 
-    claimed_hmac = params_hash.delete('hmac')
+    claimed_hmac = params_hash.delete('hmac') # cannot hmac url with hmac in it.
     salt = params_hash['salt']
     url = make_sorted_query_string(path, params_hash, salt)
     calculated_hmac = gen_hmac(url, salt)
-    claimed_hmac == calculated_hmac
+    claimed_hmac == calculated_hmac && Time.now.utc <= Time.parse(params_hash['expire'])
   end
 
-  private_class_method def self.make_sorted_query_string(path, args_hash, salt)
+  private_class_method def self.make_sorted_query_string(path, args_hash, salt, expire_min = nil)
     args_hash['salt'] = salt
+    # skip hmac on validate
+    args_hash['expire'] = (Time.now.utc + expire_min.minutes).to_s if expire_min
     # Sorting arg hash by key (hmacs are order sensative)
     path + '?' + URI.encode_www_form(args_hash.sort_by { |k, _v| k }.to_h)
   end
