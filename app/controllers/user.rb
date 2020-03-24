@@ -82,11 +82,11 @@ class UserController < Sinatra::Base
     erb :"user/login"
   end
 
-  # # User password Login
-  # get '/user/login/passwordless' do
-  #   redirect_if_logged_in # already logged in
-  #   erb :"user/login_passwordless"
-  # end
+  # User password Login
+  get '/user/login/passwordless' do
+    redirect_if_logged_in # already logged in
+    erb :"user/login_passwordless"
+  end
 
   # Authenticate User
   post '/user/login' do
@@ -94,24 +94,53 @@ class UserController < Sinatra::Base
     if user&.authenticate(params['password'])
       if !user.locked
         session['user_id'] = user.id
-        session['login_time'] = Time.now.utc.to_s
         redirect to '/', 200
       else
         session['user_id'] = nil
-        session['login_time'] = nil
         flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
         redirect to '/user/login', 403
       end
-    else
-      flash[:ERROR] = 'Incorrect User or Password'
-      redirect to '/user/login', 403
     end
-    halt 404
+    flash[:ERROR] = 'Incorrect User or Password'
+    redirect to '/user/login', 403
   end
 
   # Start password login
-  # post '/user/login/passwordless' do
-  # end
+  post '/user/login/passwordless' do
+    user = User.find_by(email: params['email'])
+    if user&.allow_passwordless
+      if !user.locked
+        # send link
+        auth_link = HmacUtils.gen_url($HOST + request.path + "/#{user.id}", { 'email' => user.email }, 8)
+        email_body = <<-BODY
+
+        Please click below to Login to party Planner (Link expires in 8 minutes).
+
+        #{auth_link}
+
+        You’re receiving this email because you asked a for passwordless login.
+        This is an automated email.
+
+        BODY
+
+        # Send email validation for user account
+        EmailUtil.send_email(
+          user.email,
+          'Time to Party: Login Link to you user account.',
+          email_body
+        )
+        flash[:SUCCESS] = 'Please see email for access link'
+        redirect to '/', 200
+      else
+        session['user_id'] = nil
+        flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
+        redirect to '/user/login', 403
+      end
+    end
+    # Invalid user
+    flash[:ERROR] = 'Incorrect User or Passwordless not allowed on that user.'
+    redirect to '/user/login/passwordless', 403
+  end
 
   # # Authenite User Passwordless
   # get '/user/login/passwordless/:id' do |id|
