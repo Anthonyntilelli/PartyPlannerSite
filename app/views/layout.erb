@@ -50,7 +50,10 @@
             <div><a href="#">Link 3</a></div>
           </div>
         </div>
-        <button class="dropbtn">Signout</button>
+        <div class="dropdown">
+          <% login_link = session['user_id'] ?  '<a href="/user/logout">Logout</a>' : '<a href="/user/login">Login/ Signup</a>' %>
+          <div class='dropdown-top'><p><%= login_link%></p></div>
+        </div>
     </nav>
 
     <% if defined? flash %>
