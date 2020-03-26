@@ -58,18 +58,12 @@ class UserController < Sinatra::Base
   end
 
   # Verify email owernship after signup
-  get '/user/verify/:id' do |id|
-    query = params.to_h
-    query.delete('id') # 'id' was not in original params
-    unless HmacUtils.valid_url?($HOST + request.path, query)
-      flash[:ERROR] = 'Invalid Link or Expired'
-      redirect to '/', 403
-    end
+  get '/user/verify/:id' do
+    validate_url_with_id
     # Valid User?
-    user = User.find_by_id(id)
-    if user.email == query['email']
-      user.locked = false if user.locked
-      user.save if user.changed?
+    if @user.email == params['email'].downcase
+      @user.locked = false if @user.locked
+      @user.save if @user.changed?
       redirect to '/', 200
     end
     flash[:ERROR] = 'Invalid user'
@@ -90,7 +84,7 @@ class UserController < Sinatra::Base
 
   # Authenticate User
   post '/user/login' do
-    user = User.find_by(email: params['email'])
+    user = User.find_by_email(params['email'].downcase)
     if user&.authenticate(params['password'])
       if !user.locked
         session['user_id'] = user.id
@@ -107,7 +101,7 @@ class UserController < Sinatra::Base
 
   # Start password login
   post '/user/login/passwordless' do
-    user = User.find_by(email: params['email'])
+    user = User.find_by(email: params['email'].downcase)
     if user&.allow_passwordless
       if !user.locked
         # send link
@@ -142,9 +136,17 @@ class UserController < Sinatra::Base
     redirect to '/user/login/passwordless', 403
   end
 
-  # # Authenite User Passwordless
-  # get '/user/login/passwordless/:id' do |id|
-  # end
+  # Authenite User Passwordless and set session.
+  get '/user/login/passwordless/:id' do
+    validate_url_with_id
+    if params['email'].downcase == @user.email
+      session['user_id'] = @user.id
+      redirect to '/', 200
+    else
+      flash[:ERROR] = 'Error with passwordless login, please try again later.'
+      redirect to '/user/login', 400
+    end
+  end
 
   # Logout and clears session
   get '/user/logout' do
@@ -211,8 +213,29 @@ class UserController < Sinatra::Base
     redirect to '/', 200
   end
 
-  # Reset Password when forgot
-  # get '/user/forgot_password' do
+  # Reset Password (page)
+  get '/user/forgot_password' do
+    erb :'/user/password_reset'
+  end
+
+  # Send Reset Link
+  # post '/user/forgot_password' do
+  #   binding.pry
+  #   raise NotImplementedError
+  # end
+
+  # # Reset password (verfy link)
+  # get 'user/reset_password/:id' do |id|
+  #   raise NotImplementedError
+  #   1. Verify link
+  #   2. verfy id and email match
+  #   3. Unlock account if applicable
+  #   4. present password reset page.
+  # end
+
+  # Reset password and unlocks user
+  # patch '/user/reset_password/:id' do |id|
+  #   raise NotImplementedError
   # end
 
   helpers do
@@ -238,6 +261,17 @@ class UserController < Sinatra::Base
 
     def redirect_if_logged_in
       redirect to '/' if session['user_id']
+    end
+
+    # redirects invalid hmacs else sets @user
+    def validate_url_with_id
+      query = params.to_h
+      uid = query.delete('id') # 'id' was not in original params
+      unless HmacUtils.valid_url?($HOST + request.path, query)
+        flash[:ERROR] = 'Invalid Link or Expired'
+        redirect to '/', 403
+      end
+      @user = User.find_by_id(uid)
     end
   end
 end
