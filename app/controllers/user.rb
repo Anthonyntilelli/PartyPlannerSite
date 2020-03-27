@@ -219,24 +219,70 @@ class UserController < Sinatra::Base
   end
 
   # Send Reset Link
-  # post '/user/forgot_password' do
-  #   binding.pry
-  #   raise NotImplementedError
-  # end
+  post '/user/forgot_password' do
+    user = User.find_by_email(params['email'].downcase)
+    if user.nil?
+      flash[:ERROR] = 'Unknown User'
+      redirect to '/user/forgot_password', 400
+    end
+    reset_link = HmacUtils.gen_url( $HOST + "/user/reset_password/#{user.id}", {'email' => user.email }, 120)
+    email_body = <<-BODY
 
-  # # Reset password (verfy link)
-  # get 'user/reset_password/:id' do |id|
-  #   raise NotImplementedError
-  #   1. Verify link
-  #   2. verfy id and email match
-  #   3. Unlock account if applicable
-  #   4. present password reset page.
-  # end
+    Please click below to to reset your party planner account (Link expires in 2 hours).
+    #{reset_link}
+    You’re receiving this email because you signed up for Party Planner.
+    This is an automated email.
+
+    If you did not request this, please ignore this email.
+
+    BODY
+
+    # Send email validation for user account
+    EmailUtil.send_email( user.email, 'Party Planner: Password Reset Link.', email_body)
+    flash[:SUCCESS] = 'Reset Password email sent.'
+    redirect to '/', 200
+  end
+
+  # Reset password (verfy link)
+  get '/user/reset_password/:id' do
+    validate_url_with_id
+    if params['email'].downcase == @user.email
+      session['reset_id'] = @user.id
+      session['reset_expire'] = params['expire']
+      erb :"user/reset_password"
+    else
+      flash[:ERROR] = 'Error with passwordless login, please try again later.'
+      redirect to '/user/login', 400
+    end
+  end
 
   # Reset password and unlocks user
-  # patch '/user/reset_password/:id' do |id|
-  #   raise NotImplementedError
-  # end
+  patch '/user/reset_password' do
+    reset_id = session.delete('reset_id')
+    reset_expire = session.delete('reset_expire')
+    # ensure session exist
+    if reset_id.nil? || reset_expire.nil?
+      flash[:ERROR] = 'Invalid Reset'
+      redirect to '/', 403
+    end
+    user = User.find_by_id(reset_id)
+    # if user exists & expire in range
+    if user && (Time.now.utc <= Time.parse(reset_expire))
+      user.locked = false
+      begin
+        user.update!(password: params['new_password'], password_confirmation: params['new_confirm_password'])
+      rescue ActiveRecord::RecordInvalid => e
+        flash[:ERROR] = e.message
+        redirect to '/', 400
+      else
+        flash[:SUCCESS] = 'Password updated'
+        redirect to '/'
+      end
+    else
+      flash[:ERROR] = 'Invalid user or expired link'
+      redirect to '/', 403
+    end
+  end
 
   helpers do
     # Test for valid logged in user and sets @user
