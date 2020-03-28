@@ -13,7 +13,7 @@ module EmailUtil
       Email.new(email: 'no_reply@test_email.tilelli.me'), # From
       subject,
       Email.new(email: to_address), # TO
-      Content.new(type: 'text/plain', value: body) # Email Body
+      Content.new(type: 'text/html', value: body) # Email Body
     )
     response = SG.client.mail._('send').post(request_body: mail.to_json)
     { status_code: response.status_code, body: response.body, headers: response.headers }

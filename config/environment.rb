@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ENV['SINATRA_ENV'] ||= 'development'
-$HOST = '127.0.0.1:9393'
+$HOST = 'http://127.0.0.1:9393'
 
 require 'bundler/setup'
 require 'sinatra/flash'

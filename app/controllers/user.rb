@@ -33,21 +33,12 @@ class UserController < Sinatra::Base
         locked: true,
         admin: false
       )
-      verify_link = HmacUtils.gen_url( $HOST + "/user/verify/#{user.id}", {'email' => user.email }, 120)
-      email_body = <<-BODY
-
-      Please click below to start using party Planner (Link expires in 2 hours).
-      #{verify_link}
-      You’re receiving this email because you signed up for Party Planner.
-      This is an automated email.
-
-      BODY
-
+      @verify_link = HmacUtils.gen_url( $HOST + "/user/verify/#{user.id}", { 'email' => user.email }, 120)
       # Send email validation for user account
       EmailUtil.send_email(
         user.email,
-        'Welcome to the party: Please verify you user account.',
-        email_body
+        'Welcome to the party: Please verify you user account.', # Subject
+        (erb :'/email/verify_account', layout: false) # Body
       )
     rescue ActiveRecord::RecordInvalid => e
       flash[:ERROR] = e.message
@@ -105,23 +96,13 @@ class UserController < Sinatra::Base
     if user&.allow_passwordless
       if !user.locked
         # send link
-        auth_link = HmacUtils.gen_url($HOST + request.path + "/#{user.id}", { 'email' => user.email }, 8)
-        email_body = <<-BODY
-
-        Please click below to Login to party Planner (Link expires in 8 minutes).
-
-        #{auth_link}
-
-        You’re receiving this email because you asked a for passwordless login.
-        This is an automated email.
-
-        BODY
+        @auth_link = HmacUtils.gen_url($HOST + request.path + "/#{user.id}", { 'email' => user.email }, 8)
 
         # Send email validation for user account
         EmailUtil.send_email(
           user.email,
-          'Time to Party: Login Link to you user account.',
-          email_body
+          'Time to Party: Login Link to you user account.', # subject
+          (erb :'email/passwordless_login', layout: false) # body
         )
         flash[:SUCCESS] = 'Please see email for access link'
         redirect to '/', 200
@@ -225,20 +206,10 @@ class UserController < Sinatra::Base
       flash[:ERROR] = 'Unknown User'
       redirect to '/user/forgot_password', 400
     end
-    reset_link = HmacUtils.gen_url( $HOST + "/user/reset_password/#{user.id}", {'email' => user.email }, 120)
-    email_body = <<-BODY
-
-    Please click below to to reset your party planner account (Link expires in 2 hours).
-    #{reset_link}
-    You’re receiving this email because you signed up for Party Planner.
-    This is an automated email.
-
-    If you did not request this, please ignore this email.
-
-    BODY
-
+    @reset_link = HmacUtils.gen_url( $HOST + "/user/reset_password/#{user.id}", {'email' => user.email }, 120)
+    email_body = erb :'email/reset_password', layout: false
     # Send email validation for user account
-    EmailUtil.send_email( user.email, 'Party Planner: Password Reset Link.', email_body)
+    EmailUtil.send_email(user.email, 'Party Planner: Password Reset Link.', email_body)
     flash[:SUCCESS] = 'Reset Password email sent.'
     redirect to '/', 200
   end
