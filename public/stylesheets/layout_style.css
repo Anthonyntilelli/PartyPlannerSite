@@ -48,3 +48,23 @@ z-index: 1;
 footer {
     margin-top: 2%;
 }
+
+.flash-WARN {
+    border-radius: 3em;
+    background: yellow;
+    padding: 2%;
+    text-align:center;
+}
+.flash-ERROR {
+    border-radius: 3em;
+    background: red;
+    padding: 2%;
+    text-align:center;
+}
+
+.flash-SUCCESS {
+    border-radius: 3em;
+    background: green;
+    padding: 2%;
+    text-align:center;
+}

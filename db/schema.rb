@@ -48,10 +48,9 @@ ActiveRecord::Schema.define(version: 6) do
 
   create_table "users", force: :cascade do |t|
     t.text "name", null: false
-    t.datetime "birthday"
     t.text "email", null: false
     t.text "password_digest", null: false
-    t.boolean "valid_email", default: false, null: false
+    t.boolean "allow_passwordless", default: false, null: false
     t.boolean "locked", default: false, null: false
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false

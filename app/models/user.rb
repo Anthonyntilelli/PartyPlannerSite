@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   validate :email_not_password, if: -> { password_digest_changed? }
   validate :check_mx_record
   has_secure_password
-  # active valid_email, locked, admin validated in DB
+  # allow_passwordless, locked and admin validated in DB
 
   private
 

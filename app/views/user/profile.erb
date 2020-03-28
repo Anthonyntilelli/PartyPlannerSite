@@ -1,0 +1,59 @@
+<h2><%=@user.name%></h2>
+<br>
+<form action="/user/me" method = 'post'>
+  <fieldset>
+    <legend>Change Name:</legend>
+    <input type="hidden" name="_method" value="patch">
+    <input type="hidden" name="change_name" value="yes">
+    <label for="new_name">New Name:</label><br>
+    <input type="text" id="new_name" name="new_name"  pattern="[A-Za-z-0-9]+\s[A-Za-z-'0-9]+" placeholder="John Doe" title="Firstname Lastname" required><br>
+    <input type="submit" value="Submit">
+    <input type="reset" value="Clear">
+  </fieldset>
+</form>
+<br>
+<form action="/user/me" method = 'post'>
+  <fieldset>
+    <legend>Change Password:</legend>
+    <input type="hidden" name="_method" value="patch">
+    <input type="hidden" name="change_password" value="yes">
+    <label for="current_password">Current Password:</label><br>
+    <input type="password" id="current_password" name="current_password" minlength="8" required ><br>
+    <label for="new_password">New Password:</label><br>
+    <input type="password" id="new_password" name="new_password" minlength="8" required><br>
+    <label for="new_confirm_password">Confirm New Password:</label><br>
+    <input type="password" id="new_confirm_password" name="new_confirm_password" minlength="8" required><br><br>
+    <input type="submit" value="Submit">
+    <input type="reset" value="Clear">
+  </fieldset>
+</form>
+<br>
+<form action="/user/me" method = 'post'>
+  <fieldset>
+    <p>Currently set to '<%= @user.allow_passwordless ? "Enabled" : "Disabled" %>'</p>
+    <legend>Enable/Disable Passwordless Login:</legend>
+    <input type="hidden" name="_method" value="patch">
+    <input type="hidden" name="change_passwordless" value="yes">
+    <input type="radio" id="passwordless_yes" name="passwordless" value="yes" required>
+    <label for="passwordless_yes">Yes</label><br>
+    <input type="radio" id="passwordless_no" name="passwordless" value="no" required>
+    <label for="passwordless_yes">No</label><br>
+    <label for="current_password">Current Password:</label><br>
+    <input type="password" id="current_password" name="current_password" minlength="8" required ><br>
+    <input type="submit" value="Submit">
+    <input type="reset" value="Clear">
+  </fieldset>
+</form>
+<br>
+<form action="/user/me" method = 'post'>
+  <fieldset>
+    <legend>Delete account:</legend>
+    <input type="hidden" name="_method" value="delete">
+    <label for="current_password">Current Password:</label><br>
+    <input type="password" id="current_password" name="current_password" minlength="8" required ><br>
+    <%# checkbox only used for conformation on webpage %>
+    <label for="i_am_sure"> Deletion is not reversible: </label>
+    <input type="checkbox" id="i_am_sure" name="i_am_sure" required ><br>
+    <input type="submit" value="Delete My Account!">
+  </fieldset>
+</form>

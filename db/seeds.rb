@@ -32,12 +32,11 @@ Theme.create!(name: 'Nature', active: false)
 puts 'Tom User'
 tom_user = User.create!(
   name: 'Tom Smith',
-  birthday: '2001-02-28', # yyyy-mm-dd
   email: 'tom@example.com',
   email_confirmation: 'tom@example.com',
   password: 'pw123456',
   password_confirmation: 'pw123456',
-  valid_email: false,
+  allow_passwordless: false,
   locked: false,
   admin: true
 )
@@ -48,8 +47,8 @@ amy_user = User.create!(
   email_confirmation: 'amy@example.com',
   password: 'pw123456',
   password_confirmation: 'pw123456',
-  valid_email: true,
   locked: false,
+  allow_passwordless: true,
   admin: false
 )
 puts 'Tom Party'
