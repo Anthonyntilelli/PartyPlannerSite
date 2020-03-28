@@ -12,6 +12,11 @@ class UserController < Sinatra::Base
   end
 
   # TODO: Sanitize Input
+  before do
+    clean = SanitizeUtils.sanitize_hash(params)
+    @params = clean
+  end
+
 
   # User signup Page
   get '/user/signup' do

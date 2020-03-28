@@ -71,3 +71,10 @@ module HmacUtils
     OpenSSL::HMAC.hexdigest(DIGEST, salted_key, url)
   end
 end
+
+# Escapes html in a Hash
+module SanitizeUtils
+  def self.sanitize_hash(hash)
+    hash.map { |k, v| [k, Rack::Utils.escape_html(v)] }.to_h
+  end
+end
