@@ -10,10 +10,4 @@ class BaseController < Sinatra::Base
     register Sinatra::Flash
     use Rack::MethodOverride # Method overwrite
   end
-
-  # Sanitize Input
-  before do
-    clean = SanitizeUtils.sanitize_hash(params)
-    @params = clean
-  end
 end

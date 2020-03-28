@@ -11,13 +11,6 @@ class UserController < Sinatra::Base
     register Sinatra::Flash
   end
 
-  # TODO: Sanitize Input
-  before do
-    clean = SanitizeUtils.sanitize_hash(params)
-    @params = clean
-  end
-
-
   # User signup Page
   get '/user/signup' do
     # already logged in
