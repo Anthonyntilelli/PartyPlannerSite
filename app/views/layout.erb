@@ -7,7 +7,7 @@
     <title>Party Planning, inc</title>
     <meta name="author" content="Anthony Tilelli">
     <meta name="description" content="A Sinatra demo project created for Flatiron bootcamp">
-    <meta name="keywords" content="flatIron,party planner,party,demo,sintra,">
+    <meta name="keywords" content="flatIron, party planner, party,demo, sintra">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="/stylesheets/normalize.css" >
     <link rel="stylesheet" href="/stylesheets/layout_style.css" >
@@ -19,12 +19,7 @@
     </header>
     <nav class='flex-container'>
         <div class="dropdown">
-          <p class='dropdown-top'>Home</p>
-          <div class="dropdown-content">
-            <div><a href="#">Link 1</a></div>
-            <div><a href="#">Link 2</a></div>
-            <div><a href="#">Link 3</a></div>
-          </div>
+          <div class='dropdown-top'><p><a href="/">Home</a></p></div>
         </div>
         <div class="dropdown">
           <div class='dropdown-top'><p>Parties</p></div>
@@ -42,14 +37,11 @@
             <div><a href="#">Link 3</a></div>
           </div>
         </div>
-        <div class="dropdown">
-          <div class='dropdown-top'><p>profile</p></div>
-          <div class="dropdown-content">
-            <div><a href="#">Link 1</a></div>
-            <div><a href="#">Link 2</a></div>
-            <div><a href="#">Link 3</a></div>
+        <% if session['user_id'] %>
+          <div class="dropdown">
+            <div class='dropdown-top'><p><a href="/user/me">Profile Settings</a></p></div>
           </div>
-        </div>
+        <% end %>
         <div class="dropdown">
           <% login_link = session['user_id'] ? '<a href="/user/logout">Logout</a>' : '<a href="/user/login">Login/ Signup</a>' %>
           <div class='dropdown-top'><p><%= login_link%></p></div>
