@@ -31,13 +31,18 @@ class AuthController < Sinatra::Base
     redirect to '/' if session['user_id']
   end
 
+  #  Validate Hmac urls
   before '/hmac/?*' do
-    # TODO
-    raise NotImplementedError
+    unless HmacUtils.valid_hmac_url?(url, request.query_string)
+      flash[:ERROR] = 'Invalid Link or Expired'
+      redirect to '/', 403
+    end
+    # session["passed_hmac"] = params["salt"]
   end
 
   # after do
   #   session.delete('before_authed')
+  #   session.delete('passed_hmac')
   # end
   # --- Filters End ---
 

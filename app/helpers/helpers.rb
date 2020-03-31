@@ -6,7 +6,7 @@ module EmailUtil
   SG = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
   # to_address string email address
   # subject string
-  # content string
+  # content string (HTML Status)
   # returns { status code, headers }
   def self.send_email(to_address, subject, body)
     mail = Mail.new(
@@ -41,21 +41,24 @@ module HmacUtils
     url + '&' + URI.encode_www_form({ 'hmac' => gen_hmac(url, salt) })
   end
 
-  # path - request.path
-  # params_hash to be added to query string
-  # return false if salt, expire or hmac parms are missing
-  # returns if hmac matches path + params and link has not expired
-  def self.valid_url?(path, params_hash)
-    # Must be false if salt or hmac are missing
-    return false unless params_hash['salt']
-    return false unless params_hash['hmac']
-    return false unless params_hash['expire']
+  # validates full url (avoids extra params added by sinatra)
+  # url_no_query - url
+  # query_string - request.query_string
+  # return false if salt, expire or hmac query_string are missing
+  # returns if hmac matches url_no_query + query_string and not expired
+  def self.valid_hmac_url?(url_no_query, query_string)
+    # Sinatra sometime has unique params
+    parameters = Rack::Utils.parse_nested_query(query_string)
+    return false unless parameters['salt']
+    return false unless parameters['hmac']
+    return false unless parameters['expire']
 
-    claimed_hmac = params_hash.delete('hmac') # cannot hmac url with hmac in it.
-    salt = params_hash['salt']
-    url = make_sorted_query_string(path, params_hash, salt)
+    # cannot hmac url with hmac in it.
+    claimed_hmac = parameters.delete('hmac')
+    salt = parameters['salt']
+    url = make_sorted_query_string(url_no_query, parameters, salt)
     calculated_hmac = gen_hmac(url, salt)
-    claimed_hmac == calculated_hmac && Time.now.utc <= Time.parse(params_hash['expire'])
+    claimed_hmac == calculated_hmac && Time.now.utc <= Time.parse(parameters['expire'])
   end
 
   private_class_method def self.make_sorted_query_string(path, args_hash, salt, expire_min = nil)
