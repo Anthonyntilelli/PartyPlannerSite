@@ -5,7 +5,7 @@ if ActiveRecord::Base.connection.migration_context.needs_migration?
   raise 'Migrations are pending. Run `rake db:migrate` to resolve the issue.'
 end
 
-use StarterController # keep as first
+use AuthController # keep as first
 use UserController
 use Rack::MethodOverride # Method overwrite
 run ApplicationController

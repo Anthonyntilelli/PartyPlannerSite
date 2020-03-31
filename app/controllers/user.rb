@@ -57,81 +57,9 @@ class UserController < Sinatra::Base
     redirect to '/', 403
   end
 
-  # User Login
-  get '/pre_user/user/login' do
-    erb :"user/login"
-  end
-
-  # User password Login
-  get '/pre_user/user/login/passwordless' do
-    erb :"user/login_passwordless"
-  end
-
-  # Authenticate User
-  post '/user/login' do
-    user = User.find_by_email(params['email'].downcase)
-    if user&.authenticate(params['password'])
-      if !user.locked
-        session['user_id'] = user.id
-        redirect to '/', 200
-      else
-        session['user_id'] = nil
-        flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
-        redirect to '/user/login', 403
-      end
-    end
-    flash[:ERROR] = 'Incorrect User or Password'
-    redirect to '/user/login', 403
-  end
-
-  # Start password login
-  post '/user/login/passwordless' do
-    user = User.find_by(email: params['email'].downcase)
-    if user&.allow_passwordless
-      if !user.locked
-        # send link
-        @auth_link = HmacUtils.gen_url($HOST + request.path + "/#{user.id}", { 'email' => user.email }, 8)
-
-        # Send email validation for user account
-        EmailUtil.send_email(
-          user.email,
-          'Time to Party: Login Link to you user account.', # subject
-          (erb :'email/passwordless_login', layout: false) # body
-        )
-        flash[:SUCCESS] = 'Please see email for access link'
-        redirect to '/', 200
-      else
-        session['user_id'] = nil
-        flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
-        redirect to '/user/login', 403
-      end
-    end
-    # Invalid user
-    flash[:ERROR] = 'Incorrect User or Passwordless not allowed on that user.'
-    redirect to '/user/login/passwordless', 403
-  end
-
-  # Authenite User Passwordless and set session.
-  get '/user/login/passwordless/:id' do
-    validate_url_with_id
-    if params['email'].downcase == @user.email
-      session['user_id'] = @user.id
-      redirect to '/', 200
-    else
-      flash[:ERROR] = 'Error with passwordless login, please try again later.'
-      redirect to '/user/login', 400
-    end
-  end
-
-  # Logout and clears session
-  get '/user/logout' do
-    session.clear
-    flash[:SUCCESS] = 'You are Logged out.'
-    redirect to '/', 200
-  end
-
   # User can view Profile
-  get '/user/me' do
+  get '/authed/user/me' do
+    # TODO: need to add '@user' back
     require_login
     erb :"/user/profile"
   end
