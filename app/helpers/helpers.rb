@@ -74,6 +74,7 @@ end
 
 # Escapes html in a Hash
 module SanitizeUtils
+  # escape_html of provided hash
   def self.sanitize_hash(hash)
     hash.map { |k, v| [k, Rack::Utils.escape_html(v)] }.to_h
   end

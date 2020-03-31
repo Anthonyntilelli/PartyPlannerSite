@@ -12,9 +12,7 @@ class UserController < Sinatra::Base
   end
 
   # User signup Page
-  get '/user/signup' do
-    # already logged in
-    redirect_if_logged_in
+  get '/pre_user/user/signup' do
     erb :"user/signup"
   end
 
@@ -60,14 +58,12 @@ class UserController < Sinatra::Base
   end
 
   # User Login
-  get '/user/login' do
-    redirect_if_logged_in # already logged in
+  get '/pre_user/user/login' do
     erb :"user/login"
   end
 
   # User password Login
-  get '/user/login/passwordless' do
-    redirect_if_logged_in # already logged in
+  get '/pre_user/user/login/passwordless' do
     erb :"user/login_passwordless"
   end
 
@@ -254,15 +250,9 @@ class UserController < Sinatra::Base
   end
 
   helpers do
-    # Test for valid logged in user and sets @user
-    def require_login
-      if session['user_id'] && User.find_by_id(session[:user_id])
-        @user = User.find_by_id(session[:user_id])
-      else
-        session.clear
-        flash[:ERROR] = 'Please log in'
-        redirect to '/user/login', 403
-      end
+    # Load user & returns user
+    def load_user_from_session
+      User.find_by_id(session[:user_id])
     end
 
     # Tests is @user matches current_password
@@ -272,10 +262,6 @@ class UserController < Sinatra::Base
 
       flash[:ERROR] = 'Incorrect current password, operation aborted.'
       redirect to '/user/me', 403
-    end
-
-    def redirect_if_logged_in
-      redirect to '/' if session['user_id']
     end
 
     # redirects invalid hmacs else sets @user
