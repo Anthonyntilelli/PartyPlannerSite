@@ -1,16 +1,7 @@
 # frozen_string_literal: true
 
 # User controller with Sinatra
-class UserController < Sinatra::Base
-  configure do
-    set :public_folder, 'public'
-    set :views, 'app/views'
-    use Rack::MethodOverride # Method overwrite
-    enable :sessions
-    set :session_secret, 'secret'
-    register Sinatra::Flash
-  end
-
+class UserController < ApplicationController
   # User signup Page
   get '/pre_user/user/signup' do
     erb :"user/signup"
@@ -174,33 +165,6 @@ class UserController < Sinatra::Base
     else
       flash[:ERROR] = 'Invalid user or expired link'
       redirect to '/', 403
-    end
-  end
-
-  helpers do
-    # Load user & returns user
-    def load_user_from_session
-      User.find_by_id(session[:user_id])
-    end
-
-    # Tests is @user matches current_password
-    # redirect to "/user/me" if incorrect password
-    def require_reauthenticate
-      return if @user&.authenticate(params['current_password'])
-
-      flash[:ERROR] = 'Incorrect current password, operation aborted.'
-      redirect to '/user/me', 403
-    end
-
-    # redirects invalid hmacs else sets @user
-    def validate_url_with_id
-      query = params.to_h
-      uid = query.delete('id') # 'id' was not in original params
-      unless HmacUtils.valid_url?($HOST + request.path, query)
-        flash[:ERROR] = 'Invalid Link or Expired'
-        redirect to '/', 403
-      end
-      @user = User.find_by_id(uid)
     end
   end
 end

@@ -2,24 +2,21 @@
 
 # Contains before filter for auth requirments
 # Auth pages (login pages), not for user manipulation
-class AuthController < Sinatra::Base
-  configure do
-    set :public_folder, 'public'
-    set :views, 'app/views'
-    set :session_secret, 'secret'
-    enable :sessions
-    register Sinatra::Flash
-    use Rack::MethodOverride # Method overwrite
+class AuthController < ApplicationController
+  # --- Filters Start ---
+
+  before "/authed/?*" do # TODO: REMOVE ME
+    raise "depricated"
   end
 
-  # --- Filters Start ---
-  # Require loggin to access these sites.
-  before '/authed/?*' do
+  before "/pre_user/?*" do # TODO: REMOVE ME
+    raise "depricated"
+  end
+
+  # Require login to access these sites.
+  before '/post_auth/?*' do
     # Test for valid logged in user
-    if session['user_id'] && User.find_by_id(session[:user_id])
-      # indicate before auth run
-      # session['before_authed'] = true
-    else
+    unless session['user_id'] && User.find_by_id(session[:user_id])
       session.clear
       flash[:ERROR] = 'Please log in'
       redirect to '/user/login', 403
@@ -27,7 +24,7 @@ class AuthController < Sinatra::Base
   end
 
   # redirect if logged_in
-  before '/pre_user/?*' do
+  before '/pre_auth/?*' do
     redirect to '/' if session['user_id']
   end
 
@@ -37,47 +34,41 @@ class AuthController < Sinatra::Base
       flash[:ERROR] = 'Invalid Link or Expired'
       redirect to '/', 403
     end
-    # session["passed_hmac"] = params["salt"]
+    session['passed_hmac'] = params['salt']
   end
 
-  # after do
-  #   session.delete('before_authed')
-  #   session.delete('passed_hmac')
-  # end
+  after do
+    session.delete('passed_hmac')
+  end
   # --- Filters End ---
 
   # User Login (password based)
-  get '/pre_user/login' do
+  get '/pre_auth/login' do
     erb :'auth/login'
   end
 
   # Authenticate User via password
-  post '/pre_user/login' do
-    user = User.find_by_email(params['email'].downcase)
-    if user&.authenticate(params['password'])
-      if !user.locked
-        session['user_id'] = user.id
-        redirect to '/', 200
-      else
-        flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
-      end
-    end
+  post '/pre_auth/login' do
+    user = load_user_from_params_email
+    save_user_id_to_session(user) if user&.authenticate(params['password'])
+
     session.delete('user_id')
     flash[:ERROR] = 'Incorrect User or Password' unless flash[:Error]
-    redirect to '/pre_user/login', 403
+    redirect to '/pre_auth/login', 403
   end
 
   # User passwordless Login
-  get '/pre_user/login/passwordless' do
+  get '/pre_auth/login/passwordless' do
     erb :'auth/login_passwordless'
   end
 
   # Start password login
-  post '/pre_user/login/passwordless' do
-    user = User.find_by(email: params['email'].downcase)
+  post '/pre_auth/login/passwordless' do
+    user = load_user_from_params_email
     if user&.allow_passwordless
       unless user.locked
-        @auth_link = HmacUtils.gen_url($HOST + request.path + "/#{user.id}", { 'email' => user.email }, 8)
+        link_body = $HOST + '/hmac/login/passwordless' + "/#{user.id}"
+        @auth_link = HmacUtils.gen_url(link_body, { 'email' => user.email }, 8)
         # Send email validation for user account
         EmailUtil.send_email(
           user.email,
@@ -91,21 +82,19 @@ class AuthController < Sinatra::Base
     end
     session.delete('user_id')
     flash[:ERROR] = 'Incorrect User or Passwordless not allowed on that user.' unless flash[:ERROR]
-    redirect to '/pre_user/login/passwordless', 403
+    redirect to '/pre_auth/login/passwordless', 403
   end
 
-  # TODO: Broken
   # Authenite User Passwordless and set session.
-  get '/pre_user/login/passwordless/:id' do
-    validate_url_with_id # TODO: Broken
-    # TODO: ensure password less is allowed again
-    if params['email'].downcase == @user.email
-      session['user_id'] = @user.id
-      redirect to '/', 200
-    else
-      flash[:ERROR] = 'Error with passwordless login, please try again later.'
-      redirect to '/pre_user/login', 400
-    end
+  get '/hmac/login/passwordless/:id' do
+    ensure_hmac_passed
+    @user = load_user_from_params_email
+    # double check correct user
+    save_user_id_to_session(@user) if params['id'].to_i == @user.id && @user&.allow_passwordless
+
+    session.clear
+    flash[ERROR] = 'Passwordless login failure, Please try again later'
+    redirect to '/'
   end
 
   # Logout by clearing session
@@ -113,5 +102,18 @@ class AuthController < Sinatra::Base
     session.clear
     flash[:SUCCESS] = 'You are Logged out.'
     redirect to '/', 200
+  end
+
+  helpers do
+    # Save user to session if not locked
+    def save_user_id_to_session(user)
+      unless user.locked
+        session['user_id'] = user.id
+        redirect to '/', 200
+      end
+      flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
+      session.delete('user_id')
+      redirect to '/pre_auth/login', 403
+    end
   end
 end
