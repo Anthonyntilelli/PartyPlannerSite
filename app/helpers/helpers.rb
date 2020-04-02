@@ -28,7 +28,7 @@ module HmacUtils
   # path - request.path
   # args_hash - to be added to query string
   # expire_min (integer) - number minutes from now link is valid for
-  # return url with hmac
+  # return get verb url with hmac
   def self.gen_url(path, args_hash, expire_min)
     # Sorting arg hash by key (hmacs are order sensative)
     raise 'args_hash cannot have salt key' if args_hash['salt']
@@ -41,12 +41,12 @@ module HmacUtils
     url + '&' + URI.encode_www_form({ 'hmac' => gen_hmac(url, salt) })
   end
 
-  # validates full url (avoids extra params added by sinatra)
+  # validates full url for get urls (avoids extra params added by sinatra)
   # url_no_query - url
   # query_string - request.query_string
   # return false if salt, expire or hmac query_string are missing
   # returns if hmac matches url_no_query + query_string and not expired
-  def self.valid_hmac_url?(url_no_query, query_string)
+  def self.valid_get_url?(url_no_query, query_string)
     # Sinatra sometime has unique params
     parameters = Rack::Utils.parse_nested_query(query_string)
     return false unless parameters['salt']

@@ -8,6 +8,7 @@ class ApplicationController < Sinatra::Base
     enable :sessions
     set :session_secret, 'secret'
     register Sinatra::Flash
+    use Rack::MethodOverride
   end
 
   get '/' do
@@ -16,14 +17,6 @@ class ApplicationController < Sinatra::Base
 
   get '/pry' do
     binding.pry
-  end
-
-  get '/gen_hmac' do
-    HmacUtils.gen_url( $HOST + "/hmac/test", { 'email' => User.last.email }, 120)
-  end
-
-  get '/hmac/test' do
-    return 'hmac Passed'
   end
 
   helpers do
@@ -37,22 +30,26 @@ class ApplicationController < Sinatra::Base
       User.find_by_email!(params['email']&.downcase)
     end
 
-    # Check to ensure hmac validation was run
-    def ensure_hmac_passed
-      unless session['passed_hmac'] == params['salt']
-        session.clear
-        flash[:ERROR] = 'Hmac validation error'
-        redirect to '/'
-      end
+    # Returns nil instead of raise Error
+    def wrapped_load_user_from_params_email
+      User.find_by_email(params['email']&.downcase)
     end
 
-    # Tests is @user matches current_password
-    # redirect to "/user/me" if incorrect password
-    def require_reauthenticate
-      return if @user&.authenticate(params['current_password'])
+    # Check to ensure hmac validation was run
+    def ensure_hmac_passed
+      return if session['passed_hmac'] == params['salt']
 
-      flash[:ERROR] = 'Incorrect current password, operation aborted.'
-      redirect to '/user/me', 403
+      session.clear
+      flash[:ERROR] = 'Hmac validation error'
+      redirect to '/', 403
+    end
+
+    def hmac_id_match_user(user, id)
+      return if id.to_i == user.id
+
+      session.clear
+      flash[ERROR] = 'Hmac failure, Please try again later'
+      redirect to '/', 403
     end
   end
 end

@@ -5,14 +5,6 @@
 class AuthController < ApplicationController
   # --- Filters Start ---
 
-  before "/authed/?*" do # TODO: REMOVE ME
-    raise "depricated"
-  end
-
-  before "/pre_user/?*" do # TODO: REMOVE ME
-    raise "depricated"
-  end
-
   # Require login to access these sites.
   before '/post_auth/?*' do
     # Test for valid logged in user
@@ -30,7 +22,9 @@ class AuthController < ApplicationController
 
   #  Validate Hmac urls
   before '/hmac/?*' do
-    unless HmacUtils.valid_hmac_url?(url, request.query_string)
+    halt 403, 'Hmac path only supports GET verb' if request.env['REQUEST_METHOD'] != 'GET'
+
+    unless HmacUtils.valid_get_url?(url, request.query_string)
       flash[:ERROR] = 'Invalid Link or Expired'
       redirect to '/', 403
     end
@@ -49,7 +43,7 @@ class AuthController < ApplicationController
 
   # Authenticate User via password
   post '/pre_auth/login' do
-    user = load_user_from_params_email
+    user = wrapped_load_user_from_params_email
     save_user_id_to_session(user) if user&.authenticate(params['password'])
 
     session.delete('user_id')
@@ -64,7 +58,7 @@ class AuthController < ApplicationController
 
   # Start password login
   post '/pre_auth/login/passwordless' do
-    user = load_user_from_params_email
+    user = wrapped_load_user_from_params_email
     if user&.allow_passwordless
       unless user.locked
         link_body = $HOST + '/hmac/login/passwordless' + "/#{user.id}"
@@ -89,12 +83,13 @@ class AuthController < ApplicationController
   get '/hmac/login/passwordless/:id' do
     ensure_hmac_passed
     @user = load_user_from_params_email
-    # double check correct user
-    save_user_id_to_session(@user) if params['id'].to_i == @user.id && @user&.allow_passwordless
+    hmac_id_match_user(@user, params['id'])
+    # double check allowed
+    save_user_id_to_session(@user) if @user&.allow_passwordless
 
-    session.clear
+    # passwordless not allowed
     flash[ERROR] = 'Passwordless login failure, Please try again later'
-    redirect to '/'
+    redirect to '/', 400
   end
 
   # Logout by clearing session

@@ -3,7 +3,7 @@
 # User controller with Sinatra
 class UserController < ApplicationController
   # User signup Page
-  get '/pre_user/user/signup' do
+  get '/pre_auth/user/signup' do
     erb :"user/signup"
   end
 
@@ -20,7 +20,7 @@ class UserController < ApplicationController
         locked: true,
         admin: false
       )
-      @verify_link = HmacUtils.gen_url( $HOST + "/user/verify/#{user.id}", { 'email' => user.email }, 120)
+      @verify_link = HmacUtils.gen_url($HOST + "/hmac/user/verify/#{user.id}", { 'email' => user.email }, 120)
       # Send email validation for user account
       EmailUtil.send_email(
         user.email,
@@ -36,74 +36,57 @@ class UserController < ApplicationController
   end
 
   # Verify email owernship after signup
-  get '/user/verify/:id' do
-    validate_url_with_id
-    # Valid User?
-    if @user.email == params['email'].downcase
-      @user.locked = false if @user.locked
-      @user.save if @user.changed?
-      redirect to '/', 200
-    end
-    flash[:ERROR] = 'Invalid user'
-    redirect to '/', 403
+  get '/hmac/user/verify/:id' do
+    ensure_hmac_passed
+    user = load_user_from_params_email
+    hmac_id_match_user(user, params['id'])
+
+    user.locked = false if user.locked
+    user.save if user.changed?
+    flash[:SUCCESS] = 'Email Verified'
+    redirect to '/', 200
   end
 
   # User can view Profile
-  get '/authed/user/me' do
-    # TODO: need to add '@user' back
-    require_login
+  get '/post_auth/user/me' do
+    @user = load_user_from_session
     erb :"/user/profile"
   end
 
   # User can update Profile
-  patch '/user/me' do
-    require_login
-    if params['change_password']
-      require_reauthenticate
-      begin
-        @user.update!(
-          password: params['new_password'],
-          password_confirmation: params['new_confirm_password']
-        )
-      rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
-        redirect to '/user/me', 400
-      end
-      flash[:SUCCESS] = 'Password update Successfull.'
-    end
-
-    if params['change_name']
-      begin
+  patch '/post_auth/user/modify/:modify' do |modify|
+    @user = load_user_from_session
+    begin
+      case modify
+      when 'name'
         @user.update!(name: params['new_name'])
-      rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
-        redirect to '/user/me', 400
-      end
-      flash[:SUCCESS] = 'Name update Successfull.'
-    end
-
-    if params['change_passwordless']
-      require_reauthenticate
-      begin
+        flash[:SUCCESS] = 'Name update Successfull.'
+      when 'password'
+        require_reauthenticate
+        @user.update!(password: params['new_password'], password_confirmation: params['new_confirm_password'])
+        flash[:SUCCESS] = 'Password update Successfull.'
+      when 'passwordless'
+        require_reauthenticate
         @user.update!(allow_passwordless: params['passwordless'] == 'yes')
-      rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
-        redirect to '/user/me', 400
+        flash[:SUCCESS] = "Passwordless update to #{@user.allow_passwordless ? 'Enabled' : 'Disabled'}."
+      else
+        raise NotImplementedError, 'Unknown method, operation aborted.'
       end
-      flash[:SUCCESS] = "Passwordless update to #{@user.allow_passwordless ? 'Enabled' : 'Disabled'}."
+    rescue ActiveRecord::RecordInvalid, NotImplementedError => e
+      flash[:ERROR] = e.message
+      redirect to '/post_auth/user/me', 400
     end
-
     @user.save user.save if @user.changed?
-    redirect to '/user/me', 200
+    redirect to '/post_auth/user/me', 200
   end
 
   # Delete user account
-  delete '/user/me' do
-    require_login
+  delete '/post_auth/user/me' do
+    @user = load_user_from_session
     require_reauthenticate
     @user.destroy
     session.clear
-    flash[:SUCCESS] = 'User Destroyed.'
+    flash[:SUCCESS] = 'User Account Removed.'
     redirect to '/', 200
   end
 
@@ -114,12 +97,16 @@ class UserController < ApplicationController
 
   # Send Reset Link
   post '/user/forgot_password' do
-    user = User.find_by_email(params['email'].downcase)
+    user = wrapped_load_user_from_params_email
     if user.nil?
       flash[:ERROR] = 'Unknown User'
       redirect to '/user/forgot_password', 400
     end
-    @reset_link = HmacUtils.gen_url( $HOST + "/user/reset_password/#{user.id}", {'email' => user.email }, 120)
+    @reset_link = HmacUtils.gen_url(
+      $HOST + "/hmac/user/reset_password/#{user.id}",
+      { 'email' => user.email },
+      120
+    )
     email_body = erb :'email/reset_password', layout: false
     # Send email validation for user account
     EmailUtil.send_email(user.email, 'Party Planner: Password Reset Link.', email_body)
@@ -128,16 +115,13 @@ class UserController < ApplicationController
   end
 
   # Reset password (verfy link)
-  get '/user/reset_password/:id' do
-    validate_url_with_id
-    if params['email'].downcase == @user.email
-      session['reset_id'] = @user.id
-      session['reset_expire'] = params['expire']
-      erb :"user/reset_password"
-    else
-      flash[:ERROR] = 'Error with passwordless login, please try again later.'
-      redirect to '/user/login', 400
-    end
+  get '/hmac/user/reset_password/:id' do
+    ensure_hmac_passed
+    @user = load_user_from_params_email
+    hmac_id_match_user(@user, params['id'])
+    session['reset_id'] = @user.id
+    session['reset_expire'] = params['expire']
+    erb :"user/reset_password"
   end
 
   # Reset password and unlocks user
@@ -152,19 +136,33 @@ class UserController < ApplicationController
     user = User.find_by_id(reset_id)
     # if user exists & expire in range
     if user && (Time.now.utc <= Time.parse(reset_expire))
-      user.locked = false
       begin
-        user.update!(password: params['new_password'], password_confirmation: params['new_confirm_password'])
+        user.update!(
+          password: params['new_password'],
+          password_confirmation: params['new_confirm_password'],
+          locked: false
+        )
       rescue ActiveRecord::RecordInvalid => e
         flash[:ERROR] = e.message
         redirect to '/', 400
       else
+        user.save
         flash[:SUCCESS] = 'Password updated'
         redirect to '/'
       end
-    else
-      flash[:ERROR] = 'Invalid user or expired link'
-      redirect to '/', 403
+    end
+    flash[:ERROR] = 'Invalid user or expired link'
+    redirect to '/', 403
+  end
+
+  helpers do
+    # Tests is @user matches current_password
+    # redirect to "/post_auth/user/me" if incorrect password
+    def require_reauthenticate
+      return if @user&.authenticate(params['current_password'])
+
+      flash[:ERROR] = 'Incorrect current password, operation aborted.'
+      redirect to '/post_auth/user/me', 403
     end
   end
 end
