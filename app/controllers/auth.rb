@@ -7,12 +7,7 @@ class AuthController < ApplicationController
 
   # Require login to access these sites.
   before '/post_auth/?*' do
-    # Test for valid logged in user
-    unless session['user_id'] && User.find_by_id(session[:user_id])
-      session.clear
-      flash[:ERROR] = 'Please log in'
-      redirect to '/user/login', 403
-    end
+    check_logged_in
   end
 
   # redirect if logged_in
@@ -29,6 +24,15 @@ class AuthController < ApplicationController
       redirect to '/', 403
     end
     session['passed_hmac'] = params['salt']
+  end
+
+  before '/admin/?*' do
+    check_logged_in
+    # Must be admin
+    return if User.find_by_id(session[:user_id]).admin
+
+    flash[:ERROR] = 'Only admin allowed on this page'
+    redirect to '/', 403
   end
 
   after do
@@ -109,6 +113,15 @@ class AuthController < ApplicationController
       flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
       session.delete('user_id')
       redirect to '/pre_auth/login', 403
+    end
+
+    # Test for valid logged in user
+    def check_logged_in
+      return if session['user_id'] && User.find_by_id(session[:user_id])
+
+      session.clear
+      flash[:ERROR] = 'Please log in'
+      redirect to '/user/login', 403
     end
   end
 end

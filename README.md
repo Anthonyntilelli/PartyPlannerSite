@@ -6,9 +6,10 @@ Sinatra powered site for planning events and inviting other users.
 
 Party planner uses before routes for auth checks
 
-- '/pre_auth/*' - Cannot be reached by those logged in
-- '/post_auth/*' - Must be logged in to reach
+- '/pre_auth/*' - Non-Logged in users only
+- '/post_auth/*' - Logged in users only
 - '/hmac/*' - Must have valid hmac/non-expired to reach.
+- '/admin/*' - Logged in admin users only
 
 ## Thanks to
 
