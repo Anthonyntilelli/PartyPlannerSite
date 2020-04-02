@@ -39,11 +39,11 @@
         </div>
         <% if session['user_id'] %>
           <div class="dropdown">
-            <div class='dropdown-top'><p><a href="/user/me">Profile Settings</a></p></div>
+            <div class='dropdown-top'><p><a href="/post_auth/user/me">Profile Settings</a></p></div>
           </div>
         <% end %>
         <div class="dropdown">
-          <% login_link = session['user_id'] ? '<a href="/user/logout">Logout</a>' : '<a href="/user/login">Login/ Signup</a>' %>
+          <% login_link = session['user_id'] ? '<a href="/logout">Logout</a>' : '<a href="/pre_auth/login">Login or Signup</a>' %>
           <div class='dropdown-top'><p><%= login_link%></p></div>
         </div>
     </nav>
