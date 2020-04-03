@@ -7,5 +7,6 @@ end
 
 use AuthController # keep as first
 use UserController
+use ThemeController
 use Rack::MethodOverride # Method overwrite
 run ApplicationController
