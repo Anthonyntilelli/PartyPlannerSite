@@ -76,7 +76,7 @@ class UserController < ApplicationController
       flash[:ERROR] = e.message
       redirect to '/post_auth/user/me', 400
     end
-    @user.save user.save if @user.changed?
+    @user.save if @user.changed?
     redirect to '/post_auth/user/me', 200
   end
 
