@@ -103,6 +103,12 @@ class AuthController < ApplicationController
     redirect to '/', 200
   end
 
+  # TODO: Implement
+  # Admin Main Page
+  get '/admin/main' do
+    raise NotImplementedError
+  end
+
   helpers do
     # Save user to session if not locked
     def save_user_id_to_session(user)
