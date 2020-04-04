@@ -127,7 +127,7 @@ class AuthController < ApplicationController
 
       session.clear
       flash[:ERROR] = 'Please log in'
-      redirect to '/user/login', 403
+      redirect to '/pre_auth/login', 403
     end
   end
 end
