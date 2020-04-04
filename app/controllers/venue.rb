@@ -7,22 +7,62 @@ class VenueController < ApplicationController
     erb :'venue/list'
   end
 
-  # create new venue
-  get '/admin/venue/new' do
-    @venue = Venue.new
-    erb :'venue/edit'
-  end
-
-  # view aand exit venue
+  # view and edit venue
   get '/admin/venue/:id' do
-    @venue = get_venue(params['id'])
-    erb :'venue/edit'
+    @venue = if params['id'] == 'new'
+               Venue.new
+             else
+               get_venue(params['id'])
+             end
+    erb :'venue/edit_or_new'
   end
 
+  # Create Venue
+  post '/admin/venue/new' do
+    begin
+      venue = Venue.create!(
+        name: params['venue_name'].titleize,
+        zipcode: params['venue_zipcode'],
+        state: params['venue_state'].upcase,
+        city: params['venue_city'].titleize,
+        street_addr: params['venue_street_addr'],
+        active: params['active'] == 'yes'
+      )
+      flash[:SUCCESS] = "Venue Created: #{venue.name}"
+      redirect to "/admin/venue/#{venue.id}"
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:ERROR] = e.message
+      redirect to '/admin/venue', 400
+    end
+  end
 
+  # Edit Venue
+  patch '/admin/venue/:id' do
+    begin
+      venue = get_venue(params['id'])
+      venue.update!(
+        name: params['venue_name'].titleize,
+        zipcode: params['venue_zipcode'],
+        state: params['venue_state'].upcase,
+        city: params['venue_city'].titleize,
+        street_addr: params['venue_street_addr'],
+        active: params['active'] == 'yes'
+      )
+      flash[:SUCCESS] = "Venue Created: #{venue.name}"
+      redirect to "/admin/venue/#{venue.id}"
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:ERROR] = e.message
+      redirect to '/admin/venue', 400
+    end
+  end
 
-
-
+  # Delete Venue
+  delete '/admin/venue/:id' do
+    venue = get_venue(params['id'])
+    venue.destroy
+    flash[:SUCCESS] = "Venue: #{venue.name} Deleted"
+    redirect to '/admin/venue', 200
+  end
 
   helpers do
     # Finds theme based on Id or redirects to admin base page
@@ -32,7 +72,7 @@ class VenueController < ApplicationController
 
       # Not Found
       flash[:ERROR] = 'Unable to find desired Venue'
-      redirect to '/admin/main', 404
+      redirect to '/admin/venue', 404
     end
   end
 end

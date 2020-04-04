@@ -1,9 +1,8 @@
 <main>
   <h2>Venue Admin Page</h2>
 
-  <a href='/admin/venue/new'> Create New Venue </a>
-
-  <h3>Theme List Page</h3>
+  <p><a href='/admin/venue/new'> Create New Venue </a></p>
+  <br>
   <table>
     <tr>
       <th>Name</th>
@@ -14,7 +13,7 @@
       <tr>
         <td><%=venue.name%></td>
         <td><%=venue.active ? 'Active' : 'Inactive'%></td>
-        <td><a href="/admin/theme/<%=venue.id%>"> Edit </a></td>
+        <td><a href="/admin/venue/<%=venue.id%>"> Edit </a></td>
       </tr>
     <% end %>
   </table>
