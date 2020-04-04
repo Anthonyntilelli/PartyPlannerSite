@@ -1,0 +1,28 @@
+<main>
+  <h2>Theme Admin Page</h2>
+
+  <form action="/admin/theme" method = 'post'>
+    <fieldset>
+      <legend>Add Theme:</legend>
+      <label for="new_name">New Name:</label><br>
+      <input type="text" id="new_name" name="new_name" title="Enter Theme name here" required><br>
+      <input type="submit" value="Create theme">
+    </fieldset>
+  </form>
+
+  <h3>Theme List Page</h3>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Modify/Delete</th>
+    </tr>
+    <% Theme.all.each do |theme| %>
+      <tr>
+        <td><%=theme.name%></td>
+        <td><%=theme.active ? 'Active' : 'Inactive'%></td>
+        <td><a href="/admin/theme/<%=theme.id%>"> Edit </a></td>
+      </tr>
+    <% end %>
+  </table>
+</main>

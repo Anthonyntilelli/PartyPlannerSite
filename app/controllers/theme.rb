@@ -2,7 +2,24 @@
 
 # Theme controller using Sinatra
 class ThemeController < ApplicationController
-  # view adn exit theme
+  # view list of themes
+  get '/admin/theme' do
+    erb :'theme/list'
+  end
+
+  # Create a new Theme
+  post '/admin/theme' do
+    begin
+      @theme = Theme.create!(name:params['new_name'].capitalize, active: true)
+    rescue ActiveRecord::RecordInvalid, NotImplementedError => e
+      flash[:ERROR] = e.message
+      redirect to '/admin/theme', 400
+    end
+    flash[:SUCCESS] = "Theme: '#{@theme.name}' Created"
+    redirect to "/admin/theme/#{@theme.id}"
+  end
+
+  # Edit theme page
   get '/admin/theme/:id' do
     @theme = get_theme(params['id'])
     erb :'theme/edit'
@@ -14,7 +31,7 @@ class ThemeController < ApplicationController
     begin
       case params['field']
       when 'name'
-        @theme.update!(name: params['new_name'].capitalize )
+        @theme.update!(name: params['new_name'].capitalize)
         flash[:SUCCESS] = 'Name update Successfull.'
       when 'active'
         @theme.update!(active: params['active'] == 'yes')
@@ -36,7 +53,7 @@ class ThemeController < ApplicationController
     @theme.destroy
 
     flash[:SUCCESS] = 'Theme removed.'
-    redirect to '/admin/main', 200
+    redirect to '/admin/theme', 200
   end
 
   helpers do
@@ -47,7 +64,7 @@ class ThemeController < ApplicationController
 
       # Not Found
       flash[:ERROR] = 'Unable to find desired Theme'
-      redirect to '/admin/main', 404
+      redirect to '/admin/theme', 404
     end
 
   end

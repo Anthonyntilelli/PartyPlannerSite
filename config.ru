@@ -8,5 +8,6 @@ end
 use AuthController # keep as first
 use UserController
 use ThemeController
+# use VenueController
 use Rack::MethodOverride # Method overwrite
 run ApplicationController

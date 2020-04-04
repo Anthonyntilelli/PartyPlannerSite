@@ -1,43 +1,46 @@
-<h2>Theme <%=@theme.name%>  ID:(<%=@theme.id%>)</h2>
-<br>
-<form action="/admin/theme/<%=@theme.id%>/name" method = 'post'>
-  <fieldset>
-    <legend>Modify Name:</legend>
-    <input type="hidden" name="_method" value="patch">
-    <label for="new_name">New Name:</label><br>
-    <input type="text" id="new_name" name="new_name" title="Enter Theme name here" required><br>
-    <br>
-    <input type="submit" value="Submit">
-    <input type="reset" value="Clear">
-  </fieldset>
-</form>
+<main>
+  <h2>Theme: <%=@theme.name%></h2>
+  <br>
+  <form action="/admin/theme/<%=@theme.id%>/name" method = 'post'>
+    <fieldset>
+      <legend>Modify Name:</legend>
+      <input type="hidden" name="_method" value="patch">
+      <label for="new_name">New Name:</label><br>
+      <input type="text" id="new_name" name="new_name" title="Enter Theme name here" required><br>
+      <br>
+      <input type="submit" value="Submit">
+      <input type="reset" value="Clear">
+    </fieldset>
+  </form>
 
-<form action="/admin/theme/<%=@theme.id%>/active" method = 'post'>
-  <fieldset>
-    <legend>Modify Active:</legend>
-    <input type="hidden" name="_method" value="patch">
-    <div>
-      <p>Currently set to '<%= @theme.active ? "Active" : "Inactive" %>'</p>
-      <p>Select Below to change:</p>
-      <input type="radio" id="active_yes" name="active" value="yes" required>
-      <label for="active_yes">Active</label><br>
-      <input type="radio" id="active_no" name="active" value="no" required>
-      <label for="active_no">Inactive</label>
-    </div>
-    <br>
-    <input type="submit" value="Submit">
-    <input type="reset" value="Clear">
-  </fieldset>
-</form>
-
-<br>
-<form action="/admin/theme/<%=@theme.id%>" method = 'post'>
-  <fieldset>
-    <legend>Delete Theme:</legend>
-    <input type="hidden" name="_method" value="delete">
-    <%# checkbox only used for conformation on webpage %>
-    <label for="i_am_sure"> Deletion is not reversible: </label>
-    <input type="checkbox" id="i_am_sure" name="i_am_sure" required ><br>
-    <input type="submit" value="Delete theme <%=@theme.name%>">
-  </fieldset>
-</form>
+  <form action="/admin/theme/<%=@theme.id%>/active" method = 'post'>
+    <fieldset>
+      <legend>Modify Active:</legend>
+      <input type="hidden" name="_method" value="patch">
+      <div>
+        <p>Currently set to '<%= @theme.active ? "Active" : "Inactive" %>'</p>
+        <p>Select Below to change:</p>
+        <input type="radio" id="active_yes" name="active" value="yes" required>
+        <label for="active_yes">Active</label><br>
+        <input type="radio" id="active_no" name="active" value="no" required>
+        <label for="active_no">Inactive</label>
+      </div>
+      <br>
+      <input type="submit" value="Submit">
+      <input type="reset" value="Clear">
+    </fieldset>
+  </form>
+  <br>
+  <form action="/admin/theme/<%=@theme.id%>" method = 'post'>
+    <fieldset>
+      <legend>Delete Theme:</legend>
+      <input type="hidden" name="_method" value="delete">
+      <%# checkbox only used for conformation on webpage %>
+      <label for="i_am_sure"> Deletion is not reversible: </label>
+      <input type="checkbox" id="i_am_sure" name="i_am_sure" required ><br>
+      <input type="submit" value="Delete theme <%=@theme.name%>">
+    </fieldset>
+  </form>
+  <br>
+  <a href="/admin/theme">Return to Themes list</a>
+</main>
