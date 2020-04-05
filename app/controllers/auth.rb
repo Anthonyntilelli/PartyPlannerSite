@@ -31,6 +31,7 @@ class AuthController < ApplicationController
     # Must be admin
     return if User.find_by_id(session[:user_id]).admin
 
+    session['admin'] = 'no' # remove admin tag if not allowed
     flash[:ERROR] = 'Only admin allowed on this page'
     redirect to '/', 403
   end
@@ -108,6 +109,7 @@ class AuthController < ApplicationController
     def save_user_id_to_session(user)
       unless user.locked
         session['user_id'] = user.id
+        session['admin'] = user.admin ? 'yes' : 'no'
         redirect to '/', 200
       end
       flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
@@ -121,7 +123,7 @@ class AuthController < ApplicationController
 
       session.clear
       flash[:ERROR] = 'Please log in'
-      redirect to '/user/login', 403
+      redirect to '/pre_auth/login', 403
     end
   end
 end

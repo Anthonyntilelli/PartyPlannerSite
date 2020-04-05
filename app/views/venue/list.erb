@@ -1,0 +1,20 @@
+<main>
+  <h2>Venue Admin Page</h2>
+
+  <p><a href='/admin/venue/new'> Create New Venue </a></p>
+  <br>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Modify/Delete</th>
+    </tr>
+    <% Venue.all.each do |venue| %>
+      <tr>
+        <td><%=venue.name%></td>
+        <td><%=venue.active ? 'Active' : 'Inactive'%></td>
+        <td><a href="/admin/venue/<%=venue.id%>"> Edit </a></td>
+      </tr>
+    <% end %>
+  </table>
+</main>

@@ -16,5 +16,10 @@ indent_size = 2
 indent_style = space
 trim_trailing_whitespace = true
 
+[*.erb]
+indent_size = 2
+indent_style = space
+trim_trailing_whitespace = true
+
 [*.md]
 trim_trailing_whitespace = false

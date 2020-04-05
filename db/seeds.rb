@@ -11,7 +11,7 @@ puts 'Active Venue'
 fl_venue = Venue.create!(
   name: 'Fun Land',
   zipcode: 12_345,
-  state: 'ny',
+  state: 'NY',
   city: 'New York',
   street_addr: '1234 My Street',
   active: true
@@ -20,7 +20,7 @@ puts 'Inactive Venue'
 Venue.create!(
   name: 'Sad Land',
   zipcode: 12_346,
-  state: 'ny',
+  state: 'NY',
   city: 'New York',
   street_addr: '1234 My Other Street',
   active: false

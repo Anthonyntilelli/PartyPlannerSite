@@ -1,0 +1,67 @@
+<%if @venue.id%>
+  <% top_title = "Edit Venue: #{@venue.name}" %>
+  <% confirm = "Confirm Edits to venue:" %>
+  <% id = @venue.id.to_s %>
+<%else%>
+   <% top_title = "New Venue" %>
+   <% confirm = "Confirm creation of new venue:" %>
+   <% id = 'new' %>
+<%end%>
+
+<h2><%= top_title %></h2>
+<br>
+<form action="/admin/venue/<%=id%>" method = 'post'>
+  <fieldset>
+    <legend>Venue Details:</legend>
+    <%if @venue.id # 'post' on new and 'patch' on edit%>
+      <input type="hidden" name="_method" value="patch">
+    <%end%>
+    <label for="venue_name">Name:</label><br>
+    <input type="text" id="venue_name" name="venue_name" value="<%=@venue.name%>" title="Name of Venue" required><br>
+    <br>
+    <label for="venue_zipcode">Zipcode:</label><br>
+    <input type="text" id="venue_zipcode" name="venue_zipcode" value="<%=@venue.zipcode%>" pattern="[0-9]{5}" title="Five digit zip code" required><br>
+    <br>
+    <label for="venue_state">State:</label><br>
+    <input type="text" id="venue_state" name="venue_state" value="<%=@venue.state%>" pattern="[A-Z]{2}" title="2 Letter State Short Code" required><br>
+    <br>
+    <label for="venue_city">City:</label><br>
+    <input type="text" id="venue_city" name="venue_city" value="<%=@venue.city%>" minlength="2" maxlength="50" title="City" required><br>
+    <br>
+    <label for="venue_street_addr">Street Address:</label><br>
+    <input type="text" id="venue_street_addr" name="venue_street_addr" value="<%=@venue.street_addr%>" title="Venue Street address" required><br>
+    <br>
+
+    <div>
+      <input type="radio" id="active_yes" name="active" value="yes" <%= @venue.active ? "checked" : "" %> required>
+      <label for="active_yes">Active</label><br>
+      <input type="radio" id="active_no" name="active" value="no" <%= @venue.active ? "" : "checked" %> required>
+      <label for="active_no">Inactive</label>
+    </div>
+    <br>
+
+    <%# checkbox only used on webpage %>
+    <label for="update_check"> <%=confirm%> </label>
+    <input type="checkbox" id="update_check" name="update_check" required ><br>
+    <input type="submit" value="Submit">
+    <input type="reset" value="Reset">
+  </fieldset>
+</form>
+
+<% # Delete venue only needed for edit %>
+<%if @venue.id%>
+  <br>
+  <% # Delete venue%>
+  <form action="/admin/venue/<%=id%>" method = 'post'>
+    <fieldset>
+      <legend>Delete Theme:</legend>
+      <input type="hidden" name="_method" value="delete">
+      <%# checkbox only used for conformation on webpage %>
+      <label for="i_am_sure"> Deletion is not reversible: </label>
+      <input type="checkbox" id="i_am_sure" name="i_am_sure" required ><br>
+      <input type="submit" value="Delete theme <%=@venue.name%>">
+    </fieldset>
+  </form>
+<%end%>
+
+<p><a href="/admin/venue">Return to Venue list</a></p>
