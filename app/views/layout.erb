@@ -37,9 +37,18 @@
             <div><a href="#">Link 3</a></div>
           </div>
         </div>
-        <% if session['user_id'] %>
-          <div class="dropdown">
+        <% if session['user_id'] && session['admin'] != 'yes' %>
+          <div class="dropdown"> <%# User %>
             <div class='dropdown-top'><p><a href="/post_auth/user/me">Profile Settings</a></p></div>
+          </div>
+        <% elsif session['user_id'] && session['admin'] == 'yes' %>
+          <div class="dropdown"> <%# Admin %>
+            <div class='dropdown-top'><p>Admin/ Profile</p></div>
+            <div class="dropdown-content">
+              <div><a href="/post_auth/user/me">Profile Setting</a></div>
+              <div><a href="/admin/venue">Admin Venues</a></div>
+              <div><a href="/admin/theme">Admin Themes</a></div>
+            </div>
           </div>
         <% end %>
         <div class="dropdown">

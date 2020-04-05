@@ -31,6 +31,7 @@ class AuthController < ApplicationController
     # Must be admin
     return if User.find_by_id(session[:user_id]).admin
 
+    session['admin'] = 'no' # remove admin tag if not allowed
     flash[:ERROR] = 'Only admin allowed on this page'
     redirect to '/', 403
   end
@@ -103,17 +104,12 @@ class AuthController < ApplicationController
     redirect to '/', 200
   end
 
-  # TODO: Implement
-  # Admin Main Page
-  get '/admin/main' do
-    raise NotImplementedError
-  end
-
   helpers do
     # Save user to session if not locked
     def save_user_id_to_session(user)
       unless user.locked
         session['user_id'] = user.id
+        session['admin'] = user.admin ? 'yes' : 'no'
         redirect to '/', 200
       end
       flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
