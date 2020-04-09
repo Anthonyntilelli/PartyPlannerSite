@@ -1,0 +1,48 @@
+<main>
+  <h2>Lets create a party no one will ever forget.</h2>
+  <form action="#" method = 'post' id="new_party">
+    <label for="name">Party Name:</label><br>
+    <input type="text" id="name" name="name" minlength="5" required><br>
+
+    <label for="venue">Select Venue:</label>
+    <select id="venue" name="vanue" form="new_party" required>
+      <option value=""></option> <%# default blank%>
+      <% Venue.all.each do |venue| %>
+        <% if venue.active %>
+          <option value="<%=venue.id%>"><%=venue.name%></option>
+        <% end %>
+      <% end %>
+    </select>
+    <br>
+
+    <label for="theme">Select Theme:</label>
+    <select id="theme" name="theme" form="new_party" required>
+      <option value=""></option> <%# default blank%>
+      <% Theme.all.each do |theme| %>
+        <% if theme.active %>
+          <option value="<%=theme.id%>"><%=theme.name%></option>
+        <% end %>
+      <% end %>
+    </select>
+    <br>
+
+    <label for="partydate">Party Date:</label>
+    <input type="date" id="partydate" name="partydate" required>
+    <br>
+
+    <label for="time_slot">Choose Time Slots</label>
+    <select id="time_slot" name="time_slot" form="new_party" required>
+    b <option value=""></option> <%# default blank%>
+      <option value="1">Morning</option>
+      <option value="2">Afternoon</option>
+      <option value="3">Evening</option>
+      <option value="4">OverNight</option>
+    </select>
+
+    <br>
+    <input type="submit" value="Submit">
+    <input type="reset" value="Reset">
+  </form>
+
+
+</main>
