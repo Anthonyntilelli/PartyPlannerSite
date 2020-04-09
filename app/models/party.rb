@@ -13,7 +13,10 @@ class Party < ActiveRecord::Base
   validates_associated :user
 
   # Each User must have unique party names
-  validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :user_id }
+  validates :name,
+            presence: true,
+            uniqueness: { case_sensitive: false, scope: :user_id },
+            length: { minimum: 5 }
   validates :user, presence: true
   validates :venue, presence: true
   validates :theme, presence: true
