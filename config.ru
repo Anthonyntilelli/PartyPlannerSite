@@ -14,8 +14,6 @@ if Resolv::DNS.open { |dns| dns.getresources('gmail.com', Resolv::DNS::Resource:
 end
 # Pre-run check
 
-
-
 use AuthController # keep as first
 use UserController
 use ThemeController
