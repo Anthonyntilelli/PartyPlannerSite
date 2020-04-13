@@ -48,7 +48,7 @@ class VenueController < ApplicationController
         street_addr: params['venue_street_addr'],
         active: params['active'] == 'yes'
       )
-      flash[:SUCCESS] = "Venue Created: #{venue.name}"
+      flash[:SUCCESS] = "Venue Updated: #{venue.name}"
       redirect to "/admin/venue/#{venue.id}"
     rescue ActiveRecord::RecordInvalid => e
       flash[:ERROR] = e.message
@@ -62,6 +62,11 @@ class VenueController < ApplicationController
     venue.destroy
     flash[:SUCCESS] = "Venue: #{venue.name} Deleted"
     redirect to '/admin/venue', 200
+  end
+
+  # show venue info
+  get '/venue' do
+    erb :'venue/view'
   end
 
   helpers do

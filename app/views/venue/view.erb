@@ -1,0 +1,8 @@
+<main>
+   <h2>Best places to party!</h2>
+   <% Venue.all.each do |venue| %>
+     <% next unless venue.active  %>
+     <h3><%=venue.name%></h3>
+     <p>Location: <%="#{venue.street_addr}, #{venue.city}, #{venue.state}, #{venue.zipcode}"%></p>
+    <% end %>
+</main>
