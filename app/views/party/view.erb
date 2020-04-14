@@ -2,4 +2,5 @@
   <h2><%=@party.name%> hosted by <%=@party.user.name%></h2>
   <p>The theme is <%=@party.theme.name%></p>
   <p>At <%=@party.venue.name%> at <%=@party.event_date%> TimeSlot: <%=time_slot_to_date(@party.time_slot)%> </p>
+  <p><a href="/post_auth/party">Return to Party List</a></p>
 </main>

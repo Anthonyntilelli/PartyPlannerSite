@@ -43,7 +43,10 @@ class PartyController < ApplicationController
   end
 
   # Edit party (E.g. Change Venue,date, time)
-  get '/post_auth/party/:party_id/edit' do end
+  get '/post_auth/party/:party_id/edit' do
+    load_user_and_party
+    erb :'party/new_edit'
+  end
 
   # Delete Party
   delete '/post_auth/party/:party_id' do end
