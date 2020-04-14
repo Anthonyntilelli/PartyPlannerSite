@@ -2,9 +2,19 @@
 
 # Party controller with Sinatra
 class PartyController < ApplicationController
+  # List all parties user created (TODO: Invites)
+  get '/post_auth/party' do
+    @user = load_user_from_session
+    # List of all parties created by user
+    @user_hosted = Party.all.find_all { |party| party.user == @user }
+    # TODO: List of all parties this user is invited to
+    erb :'party/view_all'
+  end
+
   # Create Party (page)
   get '/post_auth/party/new' do
-    erb :'party/new'
+    @party = Party.new
+    erb :'party/new_edit'
   end
 
   # Creates party
@@ -25,15 +35,6 @@ class PartyController < ApplicationController
     end
     flash[:SUCCESS] = 'Party Successfully Created: We will see you there!'
     redirect to "/post_auth/party/#{party.id}"
-  end
-
-  # List all parties user created (TODO: Invites)
-  get '/post_auth/party' do
-    @user = load_user_from_session
-    # List of all parties created by user
-    @user_hosted = Party.all.find_all { |party| party.user == @user }
-    # TODO: List of all parties this user is invited to
-    erb :'party/view_all'
   end
 
   # View a Party
@@ -68,7 +69,7 @@ class PartyController < ApplicationController
     end
   end
 
-  # Delete Party and related invites and gifts
+  # Delete party and related invites and gifts
   delete '/post_auth/party/:party_id' do
     load_user_and_party
     @party.invites.destroy_all # Remove related invites
