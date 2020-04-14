@@ -2,6 +2,7 @@
   <h2><%= @user.name%>'s Parties</h2>
   <article>
     <h3>Parties you are hosting:</h3>
+    <%='<p>You are not hosting any parties.  <a href="/post_auth/party/new">Why not start now?</a></p>' if @user_hosted.empty?%>
     <%@user_hosted.each do |party| %>
       <dl>
         <dt><%=party.name%></dt>

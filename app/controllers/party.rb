@@ -27,7 +27,7 @@ class PartyController < ApplicationController
     redirect to "/post_auth/party/#{party.id}"
   end
 
-  # List all parties user created
+  # List all parties user created (TODO: Invites)
   get '/post_auth/party' do
     @user = load_user_from_session
     # List of all parties created by user
@@ -48,14 +48,35 @@ class PartyController < ApplicationController
     erb :'party/new_edit'
   end
 
-  # Edit party (TODO)
-  patch '/post_auth/party/:id' do
+  # Edit party
+  patch '/post_auth/party/:party_id' do
     load_user_and_party
-    # TODO: Edit party
+    begin
+      @party.update!(
+        name: params['name'].titleize,
+        user: @user,
+        venue: Venue.find_by_id!(params['venue']),
+        theme: Theme.find_by_id!(params['theme']),
+        event_date: params['partydate'], # yyyy-mm-dd
+        time_slot: params['time_slot']
+      )
+      flash[:SUCCESS] = "Party Updated: #{@party.name}"
+      redirect to "/post_auth/party/#{@party.id}"
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:ERROR] = e.message
+      redirect to "post_auth/party/#{params['party_id']}", 400
+    end
   end
 
-  # Delete Party
-  delete '/post_auth/party/:party_id' do end
+  # Delete Party and related invites and gifts
+  delete '/post_auth/party/:party_id' do
+    load_user_and_party
+    @party.invites.destroy_all # Remove related invites
+    @party.gifts.destroy_all # Remove related gifts
+    @party.destroy # Delete party
+    flash[:SUCCESS] = 'Party removed.'
+    redirect to '/post_auth/party', 200
+  end
 
   helpers do
     # Load user via session id and party
