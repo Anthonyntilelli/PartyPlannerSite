@@ -28,7 +28,13 @@ class PartyController < ApplicationController
   end
 
   # List all parties user created
-  get '/post_auth/party' do end
+  get '/post_auth/party' do
+    @user = load_user_from_session
+    # List of all parties created by user
+    @user_hosted = Party.all.find_all { |party| party.user == @user }
+    # TODO: List of all parties this user is invited to
+    erb :'party/view_all'
+  end
 
   # View a Party
   get '/post_auth/party/:party_id' do
@@ -61,6 +67,20 @@ class PartyController < ApplicationController
       # Not allowed
       flash[:ERROR] = 'Invalid Party'
       redirect to '/', 404
+    end
+
+    # Converts time code number into proper time of day
+    def time_slot_to_date(time_slot)
+      case time_slot
+      when 1
+        'Morning'
+      when 2
+        'Afternoon'
+      when 3
+        'Evening'
+      when 4
+        'Latenight'
+      end
     end
   end
 end

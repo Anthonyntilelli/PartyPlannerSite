@@ -1,0 +1,14 @@
+<main>
+  <h2><%= @user.name%>'s Parties</h2>
+  <h3>Parties you are hosting:</h3>
+  <%@user_hosted.each do |party| %>
+    <dl>
+      <dt><%=party.name%></dt>
+      <dd>theme: <%=party.theme.name%></dd>
+      <dd>Venue: <%=party.venue.name%></dd>
+      <dd>Date: <%=party.event_date%> TimeSlot: <%=time_slot_to_date(party.time_slot)%></dd>
+   </dl>
+  <%end%>
+  <h3>Parties you are invited to:</h3>
+  <p># TODO</p>
+</main>
