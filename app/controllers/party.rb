@@ -37,12 +37,6 @@ class PartyController < ApplicationController
     redirect to "/post_auth/party/#{party.id}"
   end
 
-  # View a Party
-  get '/post_auth/party/:party_id' do
-    load_user_and_party(true)
-    erb :'party/view'
-  end
-
   # Edit party (page)
   get '/post_auth/party/:party_id/edit' do
     load_user_and_party
