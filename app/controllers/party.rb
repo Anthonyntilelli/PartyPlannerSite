@@ -21,8 +21,8 @@ class PartyController < ApplicationController
   post '/post_auth/party/new' do
     user = load_user_from_session
     begin
-      party = Party.create!(
-        name: params['name'],
+      Party.create!(
+        name: params['name'].titleize,
         user: user,
         venue: Venue.find_by_id!(params['venue']),
         theme: Theme.find_by_id!(params['theme']),
@@ -34,11 +34,11 @@ class PartyController < ApplicationController
       redirect to '/post_auth/party/new', 400
     end
     flash[:SUCCESS] = 'Party Successfully Created: We will see you there!'
-    redirect to "/post_auth/party/#{party.id}"
+    redirect to '/post_auth/party'
   end
 
   # Edit party (page)
-  get '/post_auth/party/:party_id/edit' do
+  get '/post_auth/party/:party_id' do
     load_user_and_party
     erb :'party/new_edit'
   end
@@ -106,6 +106,16 @@ class PartyController < ApplicationController
       when 4
         'Latenight'
       end
+    end
+
+    # Earliest day allowed for new parties
+    def min_date
+      Date.current + Party::MIN_RANGE
+    end
+
+    # Latest day allowed for new parties
+    def max_date
+      Date.current + Party::MAX_RANGE
     end
   end
 end

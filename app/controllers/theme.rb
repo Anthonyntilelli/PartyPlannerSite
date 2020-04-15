@@ -10,7 +10,7 @@ class ThemeController < ApplicationController
   # Create a new Theme
   post '/admin/theme' do
     begin
-      @theme = Theme.create!(name:params['new_name'].capitalize, active: true)
+      @theme = Theme.create!(name: params['new_name'].capitalize, active: true)
     rescue ActiveRecord::RecordInvalid, NotImplementedError => e
       flash[:ERROR] = e.message
       redirect to '/admin/theme', 400
@@ -66,6 +66,5 @@ class ThemeController < ApplicationController
       flash[:ERROR] = 'Unable to find desired Theme'
       redirect to '/admin/theme', 404
     end
-
   end
 end

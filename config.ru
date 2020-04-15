@@ -12,6 +12,7 @@ raise 'Missing Cookie session key from ENV' unless ENV['SESSION_KEY']
 if Resolv::DNS.open { |dns| dns.getresources('gmail.com', Resolv::DNS::Resource::IN::MX) } == []
   raise 'Dns or internet is not working'
 end
+
 # Pre-run check
 
 use AuthController # keep as first
