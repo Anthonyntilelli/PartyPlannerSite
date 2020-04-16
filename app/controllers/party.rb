@@ -5,9 +5,6 @@ class PartyController < ApplicationController
   # List all parties user created (TODO: Invites)
   get '/post_auth/party' do
     @user = load_user_from_session
-    # List of all parties created by user
-    @user_hosted = Party.all.find_all { |party| party.user == @user }
-    # TODO: List of all parties this user is invited to
     erb :'party/view_all'
   end
 
