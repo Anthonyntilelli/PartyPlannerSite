@@ -1,0 +1,81 @@
+<%if @party.id # party exits%>
+  <%opener = "Edit party #{@party.name} hosted by #{@party.name}."%>
+  <%form_action = "/post_auth/party/#{@party.id}"%>
+  <%confirm = "Confirm update of Party"%>
+<% else # new %>
+  <%opener = 'Lets create a party no one will ever forget.'%>
+  <%form_action = '/post_auth/party/new'%>
+  <%confirm = "Confirm creation of Party"%>
+<%end%>
+
+<main>
+  <h2><%=opener%></h2>
+  <form action="<%=form_action%>" method = 'post' id="new_party">
+    <%if @party.id # 'post' on new and 'patch' on edit%>
+      <input type="hidden" name="_method" value="patch">
+    <%end%>
+    <label for="name">Party Name:</label><br>
+    <input type="text" id="name" name="name" minlength="5" value="<%=@party.name%>" required><br>
+
+    <label for="venue">Select Venue:</label>
+    <select id="venue" name="venue" form="new_party" required>
+      <option value=""></option> <%# default blank%>
+      <% Venue.all.each do |venue| %>
+        <% if venue.active %>
+          <option value="<%=venue.id%>" <%='selected' if venue == @party.venue %>><%=venue.name%></option>
+        <% end %>
+      <% end %>
+    </select>
+    <br>
+
+    <label for="theme">Select Theme:</label>
+    <select id="theme" name="theme" form="new_party" required>
+      <option value=""></option> <%# default blank%>
+      <% Theme.all.each do |theme| %>
+        <% if theme.active %>
+          <option value="<%=theme.id%>"  <%='selected' if theme == @party.theme %> ><%=theme.name%></option>
+        <% end %>
+      <% end %>
+    </select>
+    <br>
+
+    <label for="partydate">Party Date:</label>
+    <input type="date" id="partydate" name="partydate" min="<%=min_date%>" max="<%=max_date%>" value="<%=@party.event_date%>" required>
+    <br>
+
+    <label for="time_slot">Choose Time Slots</label>
+    <select id="time_slot" name="time_slot" form="new_party" required>
+      <option value=""></option> <%# default blank%>
+      <option value="1" <%='selected' if 1 == @party.time_slot %>>Morning</option>
+      <option value="2" <%='selected' if 2 == @party.time_slot %>>Afternoon</option>
+      <option value="3" <%='selected' if 3 == @party.time_slot %>>Evening</option>
+      <option value="4" <%='selected' if 4 == @party.time_slot %>>Latenight</option>
+    </select>
+    <br>
+
+    <%if @party.id # on edit %>
+      <%# checkbox only used on webpage %>
+      <label for="update_check"> <%=confirm%> </label>
+      <input type="checkbox" id="update_check" name="update_check" required ><br>
+    <%end%>
+    <input type="submit" value="Submit">
+    <input type="reset" value="Reset">
+  </form>
+
+  <% # Delete party only needed for edit %>
+  <%if @party.id%>
+    <br>
+    <form action="/post_auth/party/<%=@party.id%>" method = 'post'>
+      <fieldset>
+        <legend>Delete Party:</legend>
+        <input type="hidden" name="_method" value="delete">
+        <%# checkbox only used for conformation on webpage %>
+        <label for="i_am_sure"> Deletion is not reversible: </label>
+        <input type="checkbox" id="i_am_sure" name="i_am_sure" required ><br>
+        <input type="submit" value="Delete party <%=@party.name%>">
+      </fieldset>
+    </form>
+    <br>
+  <%end%>
+  <p><a href="/post_auth/party">Return to Party List</a></p>
+</main>

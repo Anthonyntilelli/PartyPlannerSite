@@ -29,7 +29,7 @@ class UserController < ApplicationController
       )
     rescue ActiveRecord::RecordInvalid => e
       flash[:ERROR] = e.message
-      redirect to '/user/signup', 400
+      redirect to '/pre_auth/user/signup', 400
     end
     flash[:SUCCESS] = "Signup Successfull: Welcome #{params['name']}, please view your email for confirm link."
     redirect to '/'
