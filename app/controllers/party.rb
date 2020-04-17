@@ -5,6 +5,10 @@ class PartyController < ApplicationController
   # List all parties user created (TODO: Invites)
   get '/post_auth/party' do
     @user = load_user_from_session
+    # Parties user is hosting
+    @user_hosted = Party.all.find_all { |party| party.user == @user }
+    # Party from Invites
+    @user_invited = @user.invites.all.find_all { |invite| invite.user == @user }
     erb :'party/view_all'
   end
 
@@ -70,10 +74,60 @@ class PartyController < ApplicationController
     redirect to '/post_auth/party', 200
   end
 
+  # ---- Invites ----
+
   # Manage Invites
   get '/post_auth/party/:party_id/invites' do
     load_user_and_party
     erb :'party/manage_invites'
+  end
+
+  # Add Invites
+  post '/post_auth/party/:party_id/invites/new' do
+    load_user_and_party
+    exit_code = 400 # Start at error
+    begin
+      invited_user = load_user_from_params_email
+    rescue ActiveRecord::RecordNotFound
+      invited_user = nil
+      flash[:ERROR] = 'Invited person does not have an account. Please try again, once they have an account.'
+    end
+    if invited_user
+      begin
+        invite = Invite.create!(user: invited_user, party: @party, status: 'pending')
+        flash[:SUCCESS] = "Invite sent to #{invite.user.name}"
+        exit_code = 200
+      rescue ActiveRecord::RecordInvalid => e
+        flash[:ERROR] = e.message
+      end
+    end
+    redirect to "/post_auth/party/#{@party.id}/invites", exit_code
+  end
+
+  # Accepts or Declines Invite
+  get '/post_auth/invite/:invite_id/:action' do
+    # permission control
+    @user = load_user_from_session
+    exit_code = 404
+    begin
+      @invite = Invite.find_by_id!(params['invite_id'])
+    rescue ArgumentError, ActiveRecord::RecordNotFound
+      flash[:ERROR] = 'Invite Invalid.'
+    end
+    if @invite&.status == 'pending'
+      begin
+        @invite.update!(status: params['action'])
+        flash[:SUCCESS] = "Invite #{params['action']}."
+        exit_code = 200
+      rescue ActiveRecord::RecordInvalid => e
+        flash[:ERROR] = e.message
+        exit_code = 400
+      end
+    else
+      flash[:ERROR] = 'Invite is no longer pending.'
+    end
+
+    redirect to '/post_auth/party', exit_code
   end
 
   helpers do
@@ -89,7 +143,7 @@ class PartyController < ApplicationController
         # Allow invitees
         return if allow_invitees && @party.invites.any? { |invite| invite.user == @user }
       rescue ArgumentError, ActiveRecord::RecordNotFound
-        # Expected error on on valid_url, simply 404 below
+        # Expected error on valid urls, simply 404 below
       end
 
       # Not allowed

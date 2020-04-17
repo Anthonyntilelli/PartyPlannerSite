@@ -1,8 +1,25 @@
 <main>
   <h2>Guest List for <%=@party.name%> hosted by <%=@party.user.name%></h2>
   <br>
-  <%="<h3>No Invites: <a href='/post_auth/party/#{@party.id}/invites/new'>Let's add all your friends </h3>" if @party.invites.empty?%>
-  <%@party.invites.each do |invite| %>
-    <p><%= "#{invite.user.name} (#{invite.user.email}): Invite Status #{invite.status}"%></p>
+  <%if @party.invites.empty? %>
+    <h3>No Invites: Let's add all your friends </h3>
+  <%else%>
+    <ul>
+    <%@party.invites.each do |invite| %>
+      <li><%= "#{invite.user.name} (#{invite.user.email}): Invite #{invite.status}."%></li>
+    <%end%>
+    </ul>
   <%end%>
+  <br>
+  <form action="/post_auth/party/<%=@party.id%>/invites/new" method = 'post'>
+    <fieldset>
+      <legend>Send Invite:</legend>
+      <label for="email">Email:</label><br>
+      <input type="email" id="email" name="email" required><br>
+      <input type="submit" value="Submit">
+      <input type="reset" value="Clear">
+    </fieldset>
+  </form>
+  <br>
+  <p><a href="/post_auth/party">Back to Party List</a></p>
 </main>

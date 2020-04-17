@@ -3,9 +3,8 @@
   <article>
     <h3>Parties you are hosting:</h3>
     <%#List of all parties created by user %>
-    <%user_hosted = Party.all.find_all { |party| party.user == @user }%>
-    <%='<p>You are not hosting any parties.  <a href="/post_auth/party/new">Why not start now?</a></p>' if user_hosted.empty?%>
-    <%user_hosted.each do |party| %>
+    <%='<p>You are not hosting any parties.  <a href="/post_auth/party/new">Why not start now?</a></p>' if @user_hosted.empty?%>
+    <%@user_hosted.each do |party| %>
       <dl>
         <dt><%=party.name%></dt>
         <dd>theme: <%=party.theme.name%></dd>
@@ -19,9 +18,8 @@
   </article>
   <article>
     <h3>Parties you are invited to:</h3>
-    <%user_invited = @user.invites.all.find_all { |invite| invite.user == @user }%>
-    <%='<p>No pending invites.</p>' if user_invited.empty?%>
-    <%user_invited.each do |invite| %>
+    <%='<p>No pending invites.</p>' if @user_invited.empty?%>
+    <% @user_invited.each do |invite| %>
       <%party = invite.party%>
       <dl>
         <dt><%=party.name%> hosted by <%="#{party.user.name} (#{party.user.email})"%></dt>
@@ -29,10 +27,10 @@
         <dd>Venue: <a href='/venue'><%=party.venue.name%></a></dd>
         <dd>Date: <%=party.event_date%></dd>
         <dd>TimeSlot: <%=time_slot_to_date(party.time_slot)%></dd>
-        <%if invite.status = 'pending'%>
-          <dd><a href="#">Accept Invite</a> or <a href="#">Decline Invite<a> </dd>
+        <%if invite.status == 'pending'%>
+          <dd><a href="/post_auth/invite/<%=invite.id%>/accepted">Accept Invite</a> or <a href="/post_auth/invite/<%=invite.id%>/declined">Decline Invite<a></dd>
         <%else%>
-          <dl> Party accepted!</dl>
+          <dd>Party <%=invite.status%>!</dd>
         <%end%>
       </dl>
     <%end%>
