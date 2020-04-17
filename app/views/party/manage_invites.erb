@@ -1,0 +1,8 @@
+<main>
+  <h2>Guest List for <%=@party.name%> hosted by <%=@party.user.name%></h2>
+  <br>
+  <%="<h3>No Invites: <a href='/post_auth/party/#{@party.id}/invites/new'>Let's add all your friends </h3>" if @party.invites.empty?%>
+  <%@party.invites.each do |invite| %>
+    <p><%= "#{invite.user.name} (#{invite.user.email}): Invite Status #{invite.status}"%></p>
+  <%end%>
+</main>

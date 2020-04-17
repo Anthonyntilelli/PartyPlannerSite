@@ -70,6 +70,12 @@ class PartyController < ApplicationController
     redirect to '/post_auth/party', 200
   end
 
+  # Manage Invites
+  get '/post_auth/party/:party_id/invites' do
+    load_user_and_party
+    erb :'party/manage_invites'
+  end
+
   helpers do
     # Load user via session id and party
     # Sets @user and @party
