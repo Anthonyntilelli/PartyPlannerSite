@@ -59,4 +59,4 @@ build-iPhoneSimulator/
 *.sqlite
 
 # env
-sinatra.env
+party.env

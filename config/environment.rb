@@ -16,12 +16,13 @@ ActiveRecord::Base.establish_connection(
 )
 
 # Pre-run check
-raise 'Missing Send Grid key from ENV' unless ENV['SENDGRID_API_KEY']
-raise 'Missing URL HMAC  key from ENV' unless ENV['HMAC_URl_KEY']
-raise 'Missing Cookie session key from ENV' unless ENV['SESSION_KEY']
+raise 'Missing Send Grid key from ENV' unless ENV['PARTY_SENDGRID_API_KEY']
+raise 'Missing URL HMAC  key from ENV' unless ENV['PARTY_HMAC_URl_KEY']
+raise 'Missing Cookie session key from ENV' unless ENV['PARTY_SESSION_KEY']
+raise 'Missing Send Grid `TO` email address from ENV' unless ENV['PARTY_SENDGRID_EMAIL']
 
 # Disable DNS CHECK
-if ENV['NO_DNS'] != 'true'
+if ENV['PARTY_DISABLE_DNS'] != 'YES'
   if Resolv::DNS.open { |dns| dns.getresources('gmail.com', Resolv::DNS::Resource::IN::MX) } == []
     raise 'DNS or internet is not working'
   end

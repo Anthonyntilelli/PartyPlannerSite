@@ -1,13 +1,18 @@
 # PartyPlannerSite
 
 Sinatra powered site for planning events and inviting other users.
+This is the second Learn.co project for flatiron bootcamp.
 
 ## ENV configs
 
-- `NO_DNS` set to  `'true'` to disable DNS checks for user email.
-- `SENDGRID_API_KEY` - Send grip api key
-- `HMAC_URl_KEY` - used for hmac url key, generate via securerandom, must be 64 bits
-- `SESSION_KEY`  - used for session secret, generate via securerandom, must be 64 bits
+- Required:
+  - `PARTY_SENDGRID_API_KEY` - Send grid api key
+  - `PARTY_SENDGRID_EMAIL` - Send grid TO email address
+  - `PARTY_HMAC_URl_KEY` - used for hmac url key, generate via securerandom, must be 64 bits
+  - `PARTY_SESSION_KEY`  - used for session secret, generate via securerandom, must be 64 bits
+- Debug:
+  - `PARTY_DISABLE_DNS` - set to  `'YES'` to disable DNS checks for user email.
+  - `PARTY_DISABLE_EMAIL` - set to `'YES'` for email request to silently be ignored.
 
 ## Routes
 
