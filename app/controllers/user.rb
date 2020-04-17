@@ -20,7 +20,7 @@ class UserController < ApplicationController
         locked: true,
         admin: false
       )
-      @verify_link = HmacUtils.gen_url($HOST + "/hmac/user/verify/#{user.id}", { 'email' => user.email }, 120)
+      @verify_link = HmacUtils.gen_url(request.base_url + "/hmac/user/verify/#{user.id}", { 'email' => user.email }, 120)
       # Send email validation for user account
       EmailUtil.send_email(
         user.email,
@@ -103,7 +103,7 @@ class UserController < ApplicationController
       redirect to '/user/forgot_password', 400
     end
     @reset_link = HmacUtils.gen_url(
-      $HOST + "/hmac/user/reset_password/#{user.id}",
+      request.base_url + "/hmac/user/reset_password/#{user.id}",
       { 'email' => user.email },
       120
     )

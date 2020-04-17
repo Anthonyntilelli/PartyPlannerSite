@@ -66,7 +66,7 @@ class AuthController < ApplicationController
     user = wrapped_load_user_from_params_email
     if user&.allow_passwordless
       unless user.locked
-        link_body = $HOST + '/hmac/login/passwordless' + "/#{user.id}"
+        link_body = request.base_url + '/hmac/login/passwordless' + "/#{user.id}"
         @auth_link = HmacUtils.gen_url(link_body, { 'email' => user.email }, 8)
         # Send email validation for user account
         EmailUtil.send_email(

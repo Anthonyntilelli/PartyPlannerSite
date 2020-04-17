@@ -3,7 +3,6 @@
   <article>
     <h3>Parties you are hosting:</h3>
     <%#List of all parties created by user %>
-    <%@user_hosted = Party.all.find_all { |party| party.user == @user }%>
     <%='<p>You are not hosting any parties.  <a href="/post_auth/party/new">Why not start now?</a></p>' if @user_hosted.empty?%>
     <%@user_hosted.each do |party| %>
       <dl>
@@ -13,11 +12,27 @@
         <dd>Date: <%=party.event_date%></dd>
         <dd>TimeSlot: <%=time_slot_to_date(party.time_slot)%></dd>
         <dd><a href="/post_auth/party/<%=party.id%>"> Edit </a></dd>
+        <dd><a href="/post_auth/party/<%=party.id%>/invites">Manage Invites<a></dd>
       </dl>
     <%end%>
   </article>
   <article>
     <h3>Parties you are invited to:</h3>
-    <p># TODO</p>
+    <%='<p>No pending invites.</p>' if @user_invited.empty?%>
+    <% @user_invited.each do |invite| %>
+      <%party = invite.party%>
+      <dl>
+        <dt><%=party.name%> hosted by <%="#{party.user.name} (#{party.user.email})"%></dt>
+        <dd>theme: <%=party.theme.name%></dd>
+        <dd>Venue: <a href='/venue'><%=party.venue.name%></a></dd>
+        <dd>Date: <%=party.event_date%></dd>
+        <dd>TimeSlot: <%=time_slot_to_date(party.time_slot)%></dd>
+        <%if invite.status == 'pending'%>
+          <dd><a href="/post_auth/invite/<%=invite.id%>/accepted">Accept Invite</a> or <a href="/post_auth/invite/<%=invite.id%>/declined">Decline Invite<a></dd>
+        <%else%>
+          <dd>Party <%=invite.status%>!</dd>
+        <%end%>
+      </dl>
+    <%end%>
   </article>
 </main>
