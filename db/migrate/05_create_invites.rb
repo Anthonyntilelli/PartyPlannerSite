@@ -6,7 +6,7 @@ class CreateInvites < ActiveRecord::Migration[5.2]
     create_table :invites do |t|
       t.integer :user_id, null: false
       t.integer :party_id, null: false
-      t.boolean :accepted # True accepted, False declined, null no responce.
+      t.text    :status, null: false # accepted, declined, or pending.
       t.timestamps
     end
   end

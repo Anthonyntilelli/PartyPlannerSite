@@ -5,7 +5,6 @@ Venue.destroy_all
 Theme.destroy_all
 Party.destroy_all
 Invite.destroy_all
-Gift.destroy_all
 
 puts 'Active Venue'
 fl_venue = Venue.create!(
@@ -70,8 +69,4 @@ Party.create!(
   time_slot: 3
 )
 puts 'Tom invites Amy'
-Invite.create!(user: amy_user, party: tm_party, accepted: true)
-puts 'Amy\'s gift'
-Gift.create!(user: amy_user, party: tm_party, name: 'Toy Plane')
-puts 'Unassigned Gift'
-Gift.create!(party: tm_party, name: 'Toy Plane')
+Invite.create!(user: amy_user, party: tm_party, status: 'pending')

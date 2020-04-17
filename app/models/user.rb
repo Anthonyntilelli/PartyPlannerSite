@@ -2,9 +2,8 @@
 
 # Model for Users using Active Record
 class User < ActiveRecord::Base
-  has_many :invites
-  has_many :gifts
   has_many :parties
+  has_many :invites
 
   validates :name, presence: true
   validates :email,
