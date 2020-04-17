@@ -10,5 +10,5 @@ use UserController
 use ThemeController
 use VenueController
 use PartyController
-use Rack::MethodOverride # Method overwrite
+use Rack::MethodOverride # Method overwrite (keep above run)
 run ApplicationController
