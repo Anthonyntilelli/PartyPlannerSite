@@ -9,7 +9,7 @@ class ApplicationController < Sinatra::Base
     set :session_secret, ENV['PARTY_SESSION_KEY']
     register Sinatra::Flash
     use Rack::MethodOverride
-  #  set :show_exceptions, false
+    #  set :show_exceptions, false
   end
 
   get '/' do
@@ -17,7 +17,7 @@ class ApplicationController < Sinatra::Base
   end
 
   get '/flash' do
-    flash['alert-success'] = "I am a flash message"
+    flash['alert-success'] = 'I am a flash message'
     redirect to '/', 200
   end
 
@@ -42,7 +42,7 @@ class ApplicationController < Sinatra::Base
       return if session['passed_hmac'] == params['salt']
 
       session.clear
-      flash[:ERROR] = 'Hmac validation error'
+      flash['alert-danger'] = 'Hmac validation error'
       redirect to '/', 403
     end
 
@@ -50,7 +50,7 @@ class ApplicationController < Sinatra::Base
       return if id.to_i == user.id
 
       session.clear
-      flash[ERROR] = 'Hmac failure, Please try again later'
+      flash['alert-danger'] = 'Hmac failure, Please try again later'
       redirect to '/', 403
     end
   end

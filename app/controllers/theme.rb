@@ -12,7 +12,7 @@ class ThemeController < ApplicationController
     begin
       @theme = Theme.create!(name: params['new_name'].capitalize, active: true)
     rescue ActiveRecord::RecordInvalid, NotImplementedError => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/admin/theme', 400
     end
     flash[:SUCCESS] = "Theme: '#{@theme.name}' Created"
@@ -40,7 +40,7 @@ class ThemeController < ApplicationController
         raise NotImplementedError, 'Unknown method, Operation aborted.'
       end
     rescue ActiveRecord::RecordInvalid, NotImplementedError => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to "/admin/theme/#{params['id']}", 400
     end
     @theme.save if @theme.changed?
@@ -63,7 +63,7 @@ class ThemeController < ApplicationController
       return theme if theme
 
       # Not Found
-      flash[:ERROR] = 'Unable to find desired Theme'
+      flash['alert-danger'] = 'Unable to find desired Theme'
       redirect to '/admin/theme', 404
     end
   end

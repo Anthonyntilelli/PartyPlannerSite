@@ -29,7 +29,7 @@ class UserController < ApplicationController
         (erb :'/email/verify_account', layout: false) # Body
       )
     rescue ActiveRecord::RecordInvalid => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/pre_auth/user/signup', 400
     end
     flash[:SUCCESS] = "Signup Successfull: Welcome #{params['name']}, please view your email for confirm link."
@@ -74,7 +74,7 @@ class UserController < ApplicationController
         raise NotImplementedError, 'Unknown method, operation aborted.'
       end
     rescue ActiveRecord::RecordInvalid, NotImplementedError => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/post_auth/user/me', 400
     end
     @user.save if @user.changed?
@@ -100,7 +100,7 @@ class UserController < ApplicationController
   post '/user/forgot_password' do
     user = wrapped_load_user_from_params_email
     if user.nil?
-      flash[:ERROR] = 'Unknown User'
+      flash['alert-danger'] = 'Unknown User'
       redirect to '/user/forgot_password', 400
     end
     @reset_link = HmacUtils.gen_url(
@@ -131,7 +131,7 @@ class UserController < ApplicationController
     reset_expire = session.delete('reset_expire')
     # ensure session exist
     if reset_id.nil? || reset_expire.nil?
-      flash[:ERROR] = 'Invalid Reset'
+      flash['alert-danger'] = 'Invalid Reset'
       redirect to '/', 403
     end
     user = User.find_by_id(reset_id)
@@ -144,7 +144,7 @@ class UserController < ApplicationController
           locked: false
         )
       rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
+        flash['alert-danger'] = e.message
         redirect to '/', 400
       else
         user.save
@@ -152,7 +152,7 @@ class UserController < ApplicationController
         redirect to '/'
       end
     end
-    flash[:ERROR] = 'Invalid user or expired link'
+    flash['alert-danger'] = 'Invalid user or expired link'
     redirect to '/', 403
   end
 
@@ -162,7 +162,7 @@ class UserController < ApplicationController
     def require_reauthenticate
       return if @user&.authenticate(params['current_password'])
 
-      flash[:ERROR] = 'Incorrect current password, operation aborted.'
+      flash['alert-danger'] = 'Incorrect current password, operation aborted.'
       redirect to '/post_auth/user/me', 403
     end
   end

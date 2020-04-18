@@ -31,7 +31,7 @@ class PartyController < ApplicationController
         time_slot: params['time_slot']
       )
     rescue ActiveRecord::RecordInvalid => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/post_auth/party/new', 400
     end
     flash[:SUCCESS] = 'Party Successfully Created: We will see you there!'
@@ -59,7 +59,7 @@ class PartyController < ApplicationController
       flash[:SUCCESS] = "Party Updated: #{@party.name}"
       redirect to "/post_auth/party/#{@party.id}"
     rescue ActiveRecord::RecordInvalid => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to "post_auth/party/#{params['party_id']}", 400
     end
   end
@@ -90,7 +90,7 @@ class PartyController < ApplicationController
       invited_user = load_user_from_params_email
     rescue ActiveRecord::RecordNotFound
       invited_user = nil
-      flash[:ERROR] = 'Invited person does not have an account. Please try again, once they have an account.'
+      flash['alert-danger'] = 'Invited person does not have an account. Please try again, once they have an account.'
     end
     if invited_user
       begin
@@ -98,7 +98,7 @@ class PartyController < ApplicationController
         flash[:SUCCESS] = "Invite sent to #{invite.user.name}"
         exit_code = 200
       rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
+        flash['alert-danger'] = e.message
       end
     end
     redirect to "/post_auth/party/#{@party.id}/invites", exit_code
@@ -112,7 +112,7 @@ class PartyController < ApplicationController
     begin
       @invite = Invite.find_by_id!(params['invite_id'])
     rescue ArgumentError, ActiveRecord::RecordNotFound
-      flash[:ERROR] = 'Invite Invalid.'
+      flash['alert-danger'] = 'Invite Invalid.'
     end
     if @invite&.status == 'pending'
       begin
@@ -120,11 +120,11 @@ class PartyController < ApplicationController
         flash[:SUCCESS] = "Invite #{params['action']}."
         exit_code = 200
       rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
+        flash['alert-danger'] = e.message
         exit_code = 400
       end
     else
-      flash[:ERROR] = 'Invite is no longer pending.'
+      flash['alert-danger'] = 'Invite is no longer pending.'
     end
 
     redirect to '/post_auth/party', exit_code
@@ -147,7 +147,7 @@ class PartyController < ApplicationController
       end
 
       # Not allowed
-      flash[:ERROR] = 'Invalid Party'
+      flash['alert-danger'] = 'Invalid Party'
       redirect to '/', 404
     end
   end

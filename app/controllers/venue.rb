@@ -31,7 +31,7 @@ class VenueController < ApplicationController
       flash[:SUCCESS] = "Venue Created: #{venue.name}"
       redirect to "/admin/venue/#{venue.id}"
     rescue ActiveRecord::RecordInvalid => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/admin/venue', 400
     end
   end
@@ -51,7 +51,7 @@ class VenueController < ApplicationController
       flash[:SUCCESS] = "Venue Updated: #{venue.name}"
       redirect to "/admin/venue/#{venue.id}"
     rescue ActiveRecord::RecordInvalid => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/admin/venue', 400
     end
   end
@@ -76,7 +76,7 @@ class VenueController < ApplicationController
       return venue if venue
 
       # Not Found
-      flash[:ERROR] = 'Unable to find desired Venue'
+      flash['alert-danger'] = 'Unable to find desired Venue'
       redirect to '/admin/venue', 404
     end
   end
