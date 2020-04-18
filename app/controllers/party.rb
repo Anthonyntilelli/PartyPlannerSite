@@ -2,7 +2,7 @@
 
 # Party controller with Sinatra
 class PartyController < ApplicationController
-  # List all parties user created (TODO: Invites)
+  # List all parties user created
   get '/post_auth/party' do
     @user = load_user_from_session
     # Parties user is hosting
@@ -74,7 +74,7 @@ class PartyController < ApplicationController
     redirect to '/post_auth/party', 200
   end
 
-  # ---- Invites ----
+  # ---- Party Invites ----
 
   # Manage Invites
   get '/post_auth/party/:party_id/invites' do
@@ -149,30 +149,6 @@ class PartyController < ApplicationController
       # Not allowed
       flash[:ERROR] = 'Invalid Party'
       redirect to '/', 404
-    end
-
-    # Converts time code number into proper time of day
-    def time_slot_to_date(time_slot)
-      case time_slot
-      when 1
-        'Morning'
-      when 2
-        'Afternoon'
-      when 3
-        'Evening'
-      when 4
-        'Latenight'
-      end
-    end
-
-    # Earliest day allowed for new parties
-    def min_date
-      Date.current + Party::MIN_RANGE
-    end
-
-    # Latest day allowed for new parties
-    def max_date
-      Date.current + Party::MAX_RANGE
     end
   end
 end

@@ -10,7 +10,7 @@
         <dd>theme: <%=party.theme.name%></dd>
         <dd>Venue: <a href='/venue'><%=party.venue.name%></a></dd>
         <dd>Date: <%=party.event_date%></dd>
-        <dd>TimeSlot: <%=time_slot_to_date(party.time_slot)%></dd>
+        <dd>TimeSlot: <%=Party.time_slot_to_date(party.time_slot)%></dd>
         <dd><a href="/post_auth/party/<%=party.id%>"> Edit </a></dd>
         <dd><a href="/post_auth/party/<%=party.id%>/invites">Manage Invites<a></dd>
       </dl>
@@ -26,7 +26,7 @@
         <dd>theme: <%=party.theme.name%></dd>
         <dd>Venue: <a href='/venue'><%=party.venue.name%></a></dd>
         <dd>Date: <%=party.event_date%></dd>
-        <dd>TimeSlot: <%=time_slot_to_date(party.time_slot)%></dd>
+        <dd>TimeSlot: <%=Party.time_slot_to_date(party.time_slot)%></dd>
         <%if invite.status == 'pending'%>
           <dd><a href="/post_auth/invite/<%=invite.id%>/accepted">Accept Invite</a> or <a href="/post_auth/invite/<%=invite.id%>/declined">Decline Invite<a></dd>
         <%else%>

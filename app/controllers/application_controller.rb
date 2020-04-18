@@ -15,10 +15,6 @@ class ApplicationController < Sinatra::Base
     erb :welcome
   end
 
-  get '/pry' do
-    binding.pry
-  end
-
   helpers do
     # Load user & returns user from session id
     def load_user_from_session

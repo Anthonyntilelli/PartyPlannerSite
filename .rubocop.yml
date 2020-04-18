@@ -12,5 +12,5 @@ Style/HashTransformValues:
   Enabled: true
 Lint/SuppressedException:
   AllowComments: true
-Metrics/BlockLength:
-  Max: 30
+Metrics/ClassLength:
+  Max: 140

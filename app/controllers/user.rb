@@ -20,7 +20,8 @@ class UserController < ApplicationController
         locked: true,
         admin: false
       )
-      @verify_link = HmacUtils.gen_url(request.base_url + "/hmac/user/verify/#{user.id}", { 'email' => user.email }, 120)
+      full_url = request.base_url + "/hmac/user/verify/#{user.id}"
+      @verify_link = HmacUtils.gen_url(full_url, { 'email' => user.email }, 120)
       # Send email validation for user account
       EmailUtil.send_email(
         user.email,

@@ -40,7 +40,7 @@
     <br>
 
     <label for="partydate">Party Date:</label>
-    <input type="date" id="partydate" name="partydate" min="<%=min_date%>" max="<%=max_date%>" value="<%=@party.event_date%>" required>
+    <input type="date" id="partydate" name="partydate" min="<%=Party.earliest_date%>" max="<%=Party.latest_date%>" value="<%=@party.event_date%>" required>
     <br>
 
     <label for="time_slot">Choose Time Slots</label>
