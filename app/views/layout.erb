@@ -9,46 +9,31 @@
     <meta name="description" content="A Sinatra demo project created for Flatiron bootcamp">
     <meta name="keywords" content="flatIron, party planner, party, demo, sintra">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/stylesheets/normalize.css" >
-    <link rel="stylesheet" href="/stylesheets/layout_style.css" >
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   </head>
   <body>
-    <header>
-      <h1>Party Planning, inc</h2>
-      <p>Best Place to Schedule your Party!</p>
+    <header class="jumbotron text-center">
+      <h1>Party Planning. Inc</h1>
+      <h3>Best Place to Schedule your Party!</h3>
     </header>
-    <nav class='flex-container'>
-        <div class="dropdown">
-          <div class='dropdown-top'><p><a href="/">Home</a></p></div>
-        </div>
+
+    <nav class="navbar navbar-expand-lg justify-content-center">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a a class="nav-link" href="/">Home</a></li>
         <%if session['user_id']%>
-          <div class="dropdown">
-            <div class='dropdown-top'><p>Parties/Location</p></div>
-            <div class="dropdown-content">
-              <div><a href="/post_auth/party">Party List</a></div>
-              <div><a href="/post_auth/party/new">New Parties</a></div>
-              <div><a href="/venue">Venue Lists</a></div>
-            </div>
-          </div>
+          <li class="nav-item"><a class="nav-link" href="/post_auth/party">My Parties</a></li>
+          <li class="nav-item"><a class="nav-link" href="/post_auth/party/new">Schedule a Party</a></li>
+          <li class="nav-item"><a class="nav-link" a href="/venue">Venue Locations</a></li>
+          <li class="nav-item"><a class="nav-link" href="/post_auth/user/me">User Settings</a></li>
+        <%end%>
+        <% if session['admin'] == 'yes' %>
+          <li class="nav-item"><a class="nav-link" href="/admin/venue">Admin Venues</a></li>
+          <li class="nav-item"><a class="nav-link" href="/admin/theme">Admin Themes</a></li>
         <% end %>
-        <% if session['user_id'] && session['admin'] != 'yes' %>
-          <div class="dropdown"> <%# User %>
-            <div class='dropdown-top'><p><a href="/post_auth/user/me">Profile Settings</a></p></div>
-          </div>
-        <% elsif session['user_id'] && session['admin'] == 'yes' %>
-          <div class="dropdown"> <%# Admin %>
-            <div class='dropdown-top'><p>Admin/ Profile</p></div>
-            <div class="dropdown-content">
-              <div><a href="/post_auth/user/me">Profile Setting</a></div>
-              <div><a href="/admin/venue">Admin Venues</a></div>
-              <div><a href="/admin/theme">Admin Themes</a></div>
-            </div>
-          </div>
-        <% end %>
-        <div class="dropdown">
-          <% login_link = session['user_id'] ? '<a href="/logout">Logout</a>' : '<a href="/pre_auth/login">Login or Signup</a>' %>
-          <div class='dropdown-top'><p><%= login_link%></p></div>
-        </div>
+        <% login_link = session['user_id'] ? '/logout' : '/pre_auth/login' %>
+        <% login_text = session['user_id'] ? 'Logout' : 'Login or Signup' %>
+        <li class="nav-item"><a class="nav-link" href="<%=login_link%>"><%=login_text%></a></li>
+      </ul>
     </nav>
 
     <% if defined? flash %>
