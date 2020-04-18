@@ -28,14 +28,21 @@ Project is coded for development mode
   - `PARTY_DISABLE_DNS` - set to  `'YES'` to disable DNS checks for user email.
   - `PARTY_DISABLE_EMAIL` - set to `'YES'` for email request to silently be ignored.
 
-## SENDGRID
+## Send Grid
 
 Project uses Send Grid to manage emails for user account creation and passwordless logins.
 The api only need enough access to send email. Full access is not needed or recommended.
 
+## Admin User
+
+For security reasons, it is not possible to create an admin user via the website.
+Users must be elevated to someone with DB access.  Admin have ability to add/modify/delete
+Venues and Themes.
+
 ## Routes
 
-Party planner uses before routes for auth checks
+Party planner uses before routes for authorization checks.
+Finer grain control permission are handles in controllers.
 
 - '/pre_auth/*' - Non-Logged in users only
 - '/post_auth/*' - Logged in users only
