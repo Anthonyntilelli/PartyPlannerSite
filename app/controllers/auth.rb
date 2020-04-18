@@ -74,7 +74,7 @@ class AuthController < ApplicationController
           'Time to Party: Login Link to you user account.', # subject
           (erb :'email/passwordless_login', layout: false) # body
         )
-        flash[:SUCCESS] = 'Please see email for access link'
+        flash['alert-success'] = 'Please see email for access link'
         redirect to '/', 200
       end
       flash['alert-danger'] = 'Account is locked, please click \'Forgot my password\' to unlock'
@@ -100,7 +100,7 @@ class AuthController < ApplicationController
   # Logout by clearing session
   get '/logout' do
     session.clear
-    flash[:SUCCESS] = 'You are Logged out.'
+    flash['alert-success'] = 'You are Logged out.'
     redirect to '/', 200
   end
 

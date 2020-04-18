@@ -28,7 +28,7 @@ class VenueController < ApplicationController
         street_addr: params['venue_street_addr'],
         active: params['active'] == 'yes'
       )
-      flash[:SUCCESS] = "Venue Created: #{venue.name}"
+      flash['alert-success'] = "Venue Created: #{venue.name}"
       redirect to "/admin/venue/#{venue.id}"
     rescue ActiveRecord::RecordInvalid => e
       flash['alert-danger'] = e.message
@@ -48,7 +48,7 @@ class VenueController < ApplicationController
         street_addr: params['venue_street_addr'],
         active: params['active'] == 'yes'
       )
-      flash[:SUCCESS] = "Venue Updated: #{venue.name}"
+      flash['alert-success'] = "Venue Updated: #{venue.name}"
       redirect to "/admin/venue/#{venue.id}"
     rescue ActiveRecord::RecordInvalid => e
       flash['alert-danger'] = e.message
@@ -60,7 +60,7 @@ class VenueController < ApplicationController
   delete '/admin/venue/:id' do
     venue = get_venue(params['id'])
     venue.destroy
-    flash[:SUCCESS] = "Venue: #{venue.name} Deleted"
+    flash['alert-success'] = "Venue: #{venue.name} Deleted"
     redirect to '/admin/venue', 200
   end
 

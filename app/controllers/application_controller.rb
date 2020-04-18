@@ -16,11 +16,6 @@ class ApplicationController < Sinatra::Base
     erb :welcome
   end
 
-  get '/flash' do
-    flash['alert-success'] = 'I am a flash message'
-    redirect to '/', 200
-  end
-
   helpers do
     # Load user & returns user from session id
     def load_user_from_session

@@ -34,7 +34,7 @@ class PartyController < ApplicationController
       flash['alert-danger'] = e.message
       redirect to '/post_auth/party/new', 400
     end
-    flash[:SUCCESS] = 'Party Successfully Created: We will see you there!'
+    flash['alert-success'] = 'Party Successfully Created: We will see you there!'
     redirect to '/post_auth/party'
   end
 
@@ -56,7 +56,7 @@ class PartyController < ApplicationController
         event_date: params['partydate'], # yyyy-mm-dd
         time_slot: params['time_slot']
       )
-      flash[:SUCCESS] = "Party Updated: #{@party.name}"
+      flash['alert-success'] = "Party Updated: #{@party.name}"
       redirect to "/post_auth/party/#{@party.id}"
     rescue ActiveRecord::RecordInvalid => e
       flash['alert-danger'] = e.message
@@ -70,7 +70,7 @@ class PartyController < ApplicationController
     @party.invites.destroy_all # Remove related invites
     @party.gifts.destroy_all # Remove related gifts
     @party.destroy # Delete party
-    flash[:SUCCESS] = 'Party removed.'
+    flash['alert-success'] = 'Party removed.'
     redirect to '/post_auth/party', 200
   end
 
@@ -95,7 +95,7 @@ class PartyController < ApplicationController
     if invited_user
       begin
         invite = Invite.create!(user: invited_user, party: @party, status: 'pending')
-        flash[:SUCCESS] = "Invite sent to #{invite.user.name}"
+        flash['alert-success'] = "Invite sent to #{invite.user.name}"
         exit_code = 200
       rescue ActiveRecord::RecordInvalid => e
         flash['alert-danger'] = e.message
@@ -117,7 +117,7 @@ class PartyController < ApplicationController
     if @invite&.status == 'pending'
       begin
         @invite.update!(status: params['action'])
-        flash[:SUCCESS] = "Invite #{params['action']}."
+        flash['alert-success'] = "Invite #{params['action']}."
         exit_code = 200
       rescue ActiveRecord::RecordInvalid => e
         flash['alert-danger'] = e.message

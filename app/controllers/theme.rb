@@ -15,7 +15,7 @@ class ThemeController < ApplicationController
       flash['alert-danger'] = e.message
       redirect to '/admin/theme', 400
     end
-    flash[:SUCCESS] = "Theme: '#{@theme.name}' Created"
+    flash['alert-success'] = "Theme: '#{@theme.name}' Created"
     redirect to "/admin/theme/#{@theme.id}"
   end
 
@@ -32,10 +32,10 @@ class ThemeController < ApplicationController
       case params['field']
       when 'name'
         @theme.update!(name: params['new_name'].capitalize)
-        flash[:SUCCESS] = 'Name update Successfull.'
+        flash['alert-success'] = 'Name update Successfull.'
       when 'active'
         @theme.update!(active: params['active'] == 'yes')
-        flash[:SUCCESS] = 'Active update Successfull.'
+        flash['alert-success'] = 'Active update Successfull.'
       else
         raise NotImplementedError, 'Unknown method, Operation aborted.'
       end
@@ -52,7 +52,7 @@ class ThemeController < ApplicationController
     @theme = get_theme(params['id'])
     @theme.destroy
 
-    flash[:SUCCESS] = 'Theme removed.'
+    flash['alert-success'] = 'Theme removed.'
     redirect to '/admin/theme', 200
   end
 

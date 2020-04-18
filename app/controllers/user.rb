@@ -32,7 +32,7 @@ class UserController < ApplicationController
       flash['alert-danger'] = e.message
       redirect to '/pre_auth/user/signup', 400
     end
-    flash[:SUCCESS] = "Signup Successfull: Welcome #{params['name']}, please view your email for confirm link."
+    flash['alert-success'] = "Signup Successfull: Welcome #{params['name']}, please view your email for confirm link."
     redirect to '/'
   end
 
@@ -44,7 +44,7 @@ class UserController < ApplicationController
 
     user.locked = false if user.locked
     user.save if user.changed?
-    flash[:SUCCESS] = 'Email Verified'
+    flash['alert-success'] = 'Email Verified'
     redirect to '/', 200
   end
 
@@ -61,15 +61,15 @@ class UserController < ApplicationController
       case modify
       when 'name'
         @user.update!(name: params['new_name'])
-        flash[:SUCCESS] = 'Name update Successfull.'
+        flash['alert-success'] = 'Name update Successfull.'
       when 'password'
         require_reauthenticate
         @user.update!(password: params['new_password'], password_confirmation: params['new_confirm_password'])
-        flash[:SUCCESS] = 'Password update Successfull.'
+        flash['alert-success'] = 'Password update Successfull.'
       when 'passwordless'
         require_reauthenticate
         @user.update!(allow_passwordless: params['passwordless'] == 'yes')
-        flash[:SUCCESS] = "Passwordless update to #{@user.allow_passwordless ? 'Enabled' : 'Disabled'}."
+        flash['alert-success'] = "Passwordless update to #{@user.allow_passwordless ? 'Enabled' : 'Disabled'}."
       else
         raise NotImplementedError, 'Unknown method, operation aborted.'
       end
@@ -87,7 +87,7 @@ class UserController < ApplicationController
     require_reauthenticate
     @user.destroy
     session.clear
-    flash[:SUCCESS] = 'User Account Removed.'
+    flash['alert-success'] = 'User Account Removed.'
     redirect to '/', 200
   end
 
@@ -111,7 +111,7 @@ class UserController < ApplicationController
     email_body = erb :'email/reset_password', layout: false
     # Send email validation for user account
     EmailUtil.send_email(user.email, 'Party Planner: Password Reset Link.', email_body)
-    flash[:SUCCESS] = 'Reset Password email sent.'
+    flash['alert-success'] = 'Reset Password email sent.'
     redirect to '/', 200
   end
 
@@ -148,7 +148,7 @@ class UserController < ApplicationController
         redirect to '/', 400
       else
         user.save
-        flash[:SUCCESS] = 'Password updated'
+        flash['alert-success'] = 'Password updated'
         redirect to '/'
       end
     end
