@@ -9,10 +9,16 @@ class ApplicationController < Sinatra::Base
     set :session_secret, ENV['PARTY_SESSION_KEY']
     register Sinatra::Flash
     use Rack::MethodOverride
+  #  set :show_exceptions, false
   end
 
   get '/' do
     erb :welcome
+  end
+
+  get '/flash' do
+    flash['alert-success'] = "I am a flash message"
+    redirect to '/', 200
   end
 
   helpers do
