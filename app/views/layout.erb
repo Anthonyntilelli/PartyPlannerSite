@@ -19,17 +19,17 @@
   </head>
   <body>
     <header class="jumbotron text-center">
-      <h1>Party Planning. Inc</h1>
+      <h1 class='display-1'>Party Planning. Inc</h1>
       <h3>Best Place to Schedule your Party!</h3>
+      <noscript><p><strong>Warning:</strong> Site functionality is reduced without Javascript enabled.</p></noscript>
     </header>
-
     <nav class="navbar navbar-expand-lg ">
-      <a class="navbar-brand" href="/">PartyPlanner</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
          <i class="material-icons">menu</i>
       </button>
       <div class="collapse navbar-collapse justify-content-center" id="collapsibleNavbar">
         <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="/"><i class="material-icons">home</i></a></li>
           <%if session['user_id']%>
             <li class="nav-item"><a class="nav-link" href="/post_auth/party">My Parties</a></li>
             <li class="nav-item"><a class="nav-link" href="/post_auth/party/new">Schedule a Party</a></li>
@@ -46,7 +46,6 @@
         </ul>
       </div>
     </nav>
-
     <% unless flash.empty? %>
       <% flash.each do |key, message| %>
         <div class="alert <%=key%> alert-dismissible fade show">
@@ -56,12 +55,10 @@
       <%end%>
     <% end %>
 
-    <div class="wrapper">
-      <%= yield %>
-    </div>
+    <%= yield %>
 
-    <footer class="branding">
-      <small>&copy; 2020 <strong>PartyPlannerSite</strong></small>
+    <footer class="container">
+      <div class="row mb-3"><small>&copy; 2020 <strong>PartyPlanner Inc.</strong></small></div>
     </footer>
   </body>
 </html>
