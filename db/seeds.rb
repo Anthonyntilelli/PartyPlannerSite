@@ -61,7 +61,7 @@ if ENV['SINATRA_ENV'] == 'development'
     password_confirmation: 'pw123456',
     allow_passwordless: false,
     locked: false,
-    admin: true
+    admin: false
   )
   puts 'Amy User'
   amy_user = User.create!(
@@ -74,6 +74,50 @@ if ENV['SINATRA_ENV'] == 'development'
     allow_passwordless: true,
     admin: false
   )
+  puts 'Donna User'
+  donna_user = User.create!(
+    name: 'Donna Smith',
+    email: 'donna@example.com',
+    email_confirmation: 'donna@example.com',
+    password: 'pw123456',
+    password_confirmation: 'pw123456',
+    allow_passwordless: false,
+    locked: false,
+    admin: false
+  )
+  puts 'David User'
+  david_user = User.create!(
+    name: 'david Smith',
+    email: 'david@example.com',
+    email_confirmation: 'david@example.com',
+    password: 'pw123456',
+    password_confirmation: 'pw123456',
+    allow_passwordless: false,
+    locked: false,
+    admin: false
+  )
+  puts 'Steve User'
+  steve_user = User.create!(
+    name: 'Steve Smith',
+    email: 'steve@example.com',
+    email_confirmation: 'steve@example.com',
+    password: 'pw123456',
+    password_confirmation: 'pw123456',
+    allow_passwordless: false,
+    locked: false,
+    admin: false
+  )
+  puts 'Admin User'
+  admin_user = User.create!(
+    name: 'Party Admin',
+    email: 'admin@example.com',
+    email_confirmation: 'admin@example.com',
+    password: 'pw123456',
+    password_confirmation: 'pw123456',
+    allow_passwordless: false,
+    locked: false,
+    admin: true
+  )
   puts 'Tom Party'
   tm_party = Party.create!(
     name: 'Super Party',
@@ -83,7 +127,7 @@ if ENV['SINATRA_ENV'] == 'development'
     event_date: '2020-05-02', # yyyy-mm-dd
     time_slot: 4
   )
-  puts 'Amy Party (same name)'
+  puts 'Amy Party (same name, no invites)'
   Party.create!(
     name: 'Super party',
     user: amy_user,
@@ -94,4 +138,12 @@ if ENV['SINATRA_ENV'] == 'development'
   )
   puts 'Tom invites Amy'
   Invite.create!(user: amy_user, party: tm_party, status: 'pending')
+  puts 'Tom invites Donna'
+  Invite.create!(user: donna_user, party: tm_party, status: 'accepted')
+  puts 'Tom invites David'
+  Invite.create!(user: david_user, party: tm_party, status: 'pending')
+  puts 'Tom invites Steve'
+  Invite.create!(user: steve_user, party: tm_party, status: 'pending')
+  puts 'Tom invites admin'
+  Invite.create!(user: admin_user, party: tm_party, status: 'declined')
 end
