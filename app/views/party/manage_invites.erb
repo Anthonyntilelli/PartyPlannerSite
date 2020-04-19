@@ -1,25 +1,56 @@
-<main>
-  <h2>Guest List for <%=@party.name%> hosted by <%=@party.user.name%></h2>
-  <br>
-  <%if @party.invites.empty? %>
-    <h3>No Invites: Let's add all your friends </h3>
-  <%else%>
-    <ul>
-    <%@party.invites.each do |invite| %>
-      <li><%= "#{invite.user.name} (#{invite.user.email}): Invite #{invite.status}."%></li>
-    <%end%>
-    </ul>
-  <%end%>
-  <br>
-  <form action="/post_auth/party/<%=@party.id%>/invites/new" method = 'post'>
-    <fieldset>
-      <legend>Send Invite:</legend>
-      <label for="email">Email:</label><br>
-      <input type="email" id="email" name="email" required><br>
-      <input type="submit" value="Submit">
-      <input type="reset" value="Clear">
-    </fieldset>
-  </form>
-  <br>
-  <p><a href="/post_auth/party">Back to Party List</a></p>
+<main class="container">
+
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <h3 class="text-center">Guest List for <q><%=@party.name%></q> hosted by <%=@party.user.name%></h3>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <%if @party.invites.empty? %>
+        <h4 class="text-center">No Invites: Let's add all your friends.</h4>
+      <%else%>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%@party.invites.each do |invite|%>
+              <%color = "table-warning" # pending%>
+              <%color = "table-danger" if invite.status == "declined"%>
+              <%color = "table-success" if invite.status == "accepted"%>
+              <tr class="<%=color%>">
+                <td><%=invite.user.name%></td>
+                <td><%=invite.user.email%></td>
+                <td><%=invite.status%></td>
+              </tr>
+            <%end%>
+          </tbody>
+        </table>
+      <%end%>
+    </div>
+  </div>
+  <hr>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <form action="/post_auth/party/<%=@party.id%>/invites/new" method = "post" class="was-validated">
+        <fieldset>
+          <legend class="text-center">Send Invite:</legend>
+          <label for="email">Email:</label><br>
+          <input type="email" id="email" name="email" class="form-control" required><br>
+          <input type="submit" value="Submit">
+          <input type="reset" value="Clear">
+        </fieldset>
+      </form>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <a href="/post_auth/party">Back to Party List</a>
+    </div>
+  </div>
 </main>

@@ -127,7 +127,7 @@ if ENV['SINATRA_ENV'] == 'development'
     event_date: '2020-05-02', # yyyy-mm-dd
     time_slot: 4
   )
-  puts 'Amy Party (same name, no invites)'
+  puts 'Amy Party (Same name as Tom\'s party, no invites)'
   Party.create!(
     name: 'Super party',
     user: amy_user,
