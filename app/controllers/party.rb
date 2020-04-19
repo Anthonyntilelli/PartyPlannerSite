@@ -68,7 +68,6 @@ class PartyController < ApplicationController
   delete '/post_auth/party/:party_id' do
     load_user_and_party
     @party.invites.destroy_all # Remove related invites
-    @party.gifts.destroy_all # Remove related gifts
     @party.destroy # Delete party
     flash['alert-success'] = 'Party removed.'
     redirect to '/post_auth/party', 200

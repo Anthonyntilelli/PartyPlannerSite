@@ -14,11 +14,7 @@ gem 'thin'
 
 group :development do
   gem 'pry'
+  gem 'rubocop'
   gem 'shotgun'
   gem 'tux'
-end
-
-group :test do
-  gem 'rspec'
-  gem 'rubocop'
 end
