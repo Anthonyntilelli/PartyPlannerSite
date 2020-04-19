@@ -29,7 +29,7 @@
       <% unless flash.empty? %>
         <% flash.each do |key, message| %>
           <div class=row>
-            <div class="col-sm-12 text-center alert <%=key%> alert-dismissible fade show">
+            <div class="col-sm-12 text-center alert <%=key%> alert-dismissible fade show mb-0">
               <button type="button" class="close" data-dismiss="alert">&times;</button>
               <%= message %>
             </div>
@@ -47,7 +47,7 @@
               <%if session['user_id']%>
                 <li class="nav-item"><a class="nav-link" href="/post_auth/party">My Parties</a></li>
                 <li class="nav-item"><a class="nav-link" href="/post_auth/party/new">Schedule a Party</a></li>
-                <li class="nav-item"><a class="nav-link" a href="/venue">Venue Locations</a></li>
+                <li class="nav-item"><a class="nav-link" href="/venue">Venue Locations</a></li>
                 <li class="nav-item"><a class="nav-link" href="/post_auth/user/me">User Settings</a></li>
               <%end%>
               <% if session['admin'] == 'yes' %>
