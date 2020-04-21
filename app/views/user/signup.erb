@@ -1,30 +1,54 @@
 <main class="container">
-  <h2>Welcome to the Party!</h2>
+  <div class='row mb-3'>
+    <div class="col-sm-12"><h3 class="display-3 text-center">Welcome to the Party!</h3></div>
+  </div>
 
-  <form action="/user/signup" method="POST">
-    <label for="name">Name:</label><br>
-    <input type="text" id="name" name="name" pattern="[A-Za-z-0-9]+\s[A-Za-z-'0-9]+" placeholder="John Doe" title="Firstname Lastname" required><br>
+  <form action="/user/signup" method="POST" class="was-validated">
+    <div class='row mb-3'>
+      <div class="col-sm-12">
+        <label for="name">Name:</label>
+        <input class="form-control" type="text" id="name" name="name" pattern="[A-Za-z-0-9]+\s[A-Za-z-'0-9]+" placeholder="John Doe" title="Firstname Lastname" required>
+      </div>
+    </div>
 
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" required><br>
+    <div class='row mb-3'>
+      <div class="col-sm-6">
+        <label for="email">Email:</label>
+        <input class="form-control" type="email" id="email" name="email" placeholder="user@example.com" required>
+      </div>
+      <div class='col-sm-6'>
+        <label for="email_confirmation">Email Confirmation:</label><br>
+        <input class="form-control" type="email" id="email_confirmation" name="email_confirmation" placeholder="user@example.com" required>
+      </div>
+    </div>
 
-    <label for="email_confirmation">Email Confirmation:</label><br>
-    <input type="email" id="email_confirmation" name="email_confirmation" required><br>
+    <div class='row mb-3'>
+      <div class="col-sm-6">
+        <label for="password">Password:</label><br>
+        <input class="form-control" type="password" id="password" name="password" minlength="8" required>
+      </div>
+      <div class='col-sm-6'>
+        <label for="password_Confirmation">Password Confirmation:</label><br>
+        <input class="form-control" type="password" id="password_confirmation" name="password_confirmation" minlength="8" required>
+      </div>
+    </div>
 
-    <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password" minlength="8" required><br>
-
-    <label for="password_Confirmation">Password Confirmation:</label><br>
-    <input type="password" id="password_confirmation" name="password_confirmation" minlength="8" required><br>
-
-    <p>Allow Passwordless login:</p>
-    <input type="radio" id="passwordless_yes" name="passwordless" value="yes" required>
-    <label for="passwordless_yes">Yes</label><br>
-    <input type="radio" id="passwordless_no" name="passwordless" value="no" required>
-    <label for="passwordless_no">No</label><br>
-
-    <br>
-
+    <div class='row mb-3'>
+      <div class="col-sm-3">
+        <p class='mb-3'>Allow Passwordless login:</p>
+      </div>
+      <div class="col-sm-6">
+        <div class="custom-control custom-radio custom-control-inline">
+          <input class="custom-control-input" type="radio" id="passwordless_yes" name="passwordless" value="yes" required>
+          <label class="custom-control-label" for="passwordless_yes">Yes</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input class="custom-control-input" type="radio" id="passwordless_no" name="passwordless" value="no" required>
+          <label class="custom-control-label" for="passwordless_no">No</label>
+        </div>
+      </div>
+      <div class="col-sm-3"></div>
+    </div>
     <input type="submit" value="Submit">
     <input type="reset" value="Clear">
   </form>

@@ -47,13 +47,13 @@
               <%if session['user_id']%>
                 <li class="nav-item"><a class="nav-link" href="/post_auth/party">My Parties</a></li>
                 <li class="nav-item"><a class="nav-link" href="/post_auth/party/new">Schedule a Party</a></li>
-                <li class="nav-item"><a class="nav-link" href="/venue">Venue Locations</a></li>
                 <li class="nav-item"><a class="nav-link" href="/post_auth/user/me">User Settings</a></li>
               <%end%>
               <% if session['admin'] == 'yes' %>
                 <li class="nav-item"><a class="nav-link text-danger" href="/admin/venue">Admin Venues</a></li>
                 <li class="nav-item"><a class="nav-link text-danger" href="/admin/theme">Admin Themes</a></li>
               <% end %>
+              <li class="nav-item"><a class="nav-link" href="/venue">Venue Locations</a></li>
               <% login_link = session['user_id'] ? '/logout' : '/pre_auth/login' %>
               <% login_text = session['user_id'] ? 'Logout' : 'Login or Signup' %>
               <li class="nav-item"><a class="nav-link" href="<%=login_link%>"><%=login_text%></a></li>
