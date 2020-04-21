@@ -1,58 +1,83 @@
 <main class="container">
-  <h2><%=@user.name%></h2>
-  <br>
-  <form action="/post_auth/user/modify/name" method = 'post'>
-    <fieldset>
-      <legend>Change Name:</legend>
-      <input type="hidden" name="_method" value="patch">
-      <label for="new_name">New Name:</label><br>
-      <input type="text" id="new_name" name="new_name"  pattern="[A-Za-z-0-9]+\s[A-Za-z-'0-9]+" placeholder="John Doe" title="Firstname Lastname" required><br>
-      <input type="submit" value="Submit">
-      <input type="reset" value="Clear">
-    </fieldset>
-  </form>
-  <br>
-  <form action="/post_auth/user/modify/password" method = 'post'>
-    <fieldset>
-      <legend>Change Password:</legend>
-      <input type="hidden" name="_method" value="patch">
-      <label for="current_password">Current Password:</label><br>
-      <input type="password" id="current_password" name="current_password" minlength="8" required ><br>
-      <label for="new_password">New Password:</label><br>
-      <input type="password" id="new_password" name="new_password" minlength="8" required><br>
-      <label for="new_confirm_password">Confirm New Password:</label><br>
-      <input type="password" id="new_confirm_password" name="new_confirm_password" minlength="8" required><br><br>
-      <input type="submit" value="Submit">
-      <input type="reset" value="Clear">
-    </fieldset>
-  </form>
-  <br>
-  <form action="/post_auth/user/modify/passwordless" method = 'post'>
-    <fieldset>
-      <p>Currently set to '<%= @user.allow_passwordless ? "Enabled" : "Disabled" %>'</p>
-      <legend>Enable/Disable Passwordless Login:</legend>
-      <input type="hidden" name="_method" value="patch">
-      <input type="radio" id="passwordless_yes" name="passwordless" value="yes" required>
-      <label for="passwordless_yes">Yes</label><br>
-      <input type="radio" id="passwordless_no" name="passwordless" value="no" required>
-      <label for="passwordless_no">No</label><br>
-      <label for="current_password">Current Password:</label><br>
-      <input type="password" id="current_password" name="current_password" minlength="8" required ><br>
-      <input type="submit" value="Submit">
-      <input type="reset" value="Clear">
-    </fieldset>
-  </form>
-  <br>
-  <form action="/post_auth/user/me" method = 'post'>
-    <fieldset>
-      <legend>Delete account:</legend>
-      <input type="hidden" name="_method" value="delete">
-      <label for="current_password">Current Password:</label><br>
-      <input type="password" id="current_password" name="current_password" minlength="8" required ><br>
-      <%# checkbox only used for conformation on webpage %>
-      <label for="i_am_sure"> Deletion is not reversible: </label>
-      <input type="checkbox" id="i_am_sure" name="i_am_sure" required ><br>
-      <input type="submit" value="Delete My Account!">
-    </fieldset>
-  </form>
+  <div class='row mb-3'>
+    <div class="col-sm-12"><h3 class="display-3 text-center"><strong>Edit User:</strong><%=@user.name%></h3></div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <form action="/post_auth/user/modify/name" method = 'post' class="was-validated">
+        <fieldset class="border p-4">
+          <legend class="w-auto mb-n2">Change Name:</legend>
+          <input type="hidden" name="_method" value="patch">
+          <label for="new_name">New Name:</label>
+          <input class="form-control my-3" type="text" id="new_name" name="new_name"  pattern="[A-Za-z-0-9]+\s[A-Za-z-'0-9]+" placeholder="John Doe" title="Firstname Lastname" required>
+          <input type="submit" value="Submit">
+          <input type="reset" value="Clear">
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <form action="/post_auth/user/modify/password" method = 'post' class="was-validated">
+        <fieldset class="border p-4">
+          <legend class="w-auto mb-n2">Change Password:</legend>
+          <input type="hidden" name="_method" value="patch">
+          <label class="mb-3" for="current_password">Current Password:</label><br>
+          <input type="password" class="form-control" id="current_password" name="current_password" minlength="8" required >
+          <label class="my-3" for="new_password">New Password:</label><br>
+          <input type="password" class="form-control" id="new_password" name="new_password" minlength="8" required>
+          <label class="my-3" for="new_confirm_password">Confirm New Password:</label><br>
+          <input type="password" class="form-control" id="new_confirm_password" name="new_confirm_password" minlength="8" required>
+          <input class="my-3" type="submit" value="Submit">
+          <input class="my-3" type="reset" value="Clear">
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <form action="/post_auth/user/modify/passwordless" method = 'post'  class="was-validated">
+        <fieldset class="border p-4">
+          <p>Currently set to '<%= @user.allow_passwordless ? "Enabled" : "Disabled" %>'</p>
+          <legend class="w-auto mb-n2">Enable/Disable Passwordless Login:</legend>
+          <input type="hidden" name="_method" value="patch">
+          <div class="custom-control custom-radio mb-1">
+            <input class="custom-control-input" type="radio" id="passwordless_yes" name="passwordless" value="yes" required>
+            <label class="custom-control-label" for="passwordless_yes">Yes</label>
+          </div>
+          <div class="custom-control custom-radio mb-3">
+            <input class="custom-control-input" type="radio" id="passwordless_no" name="passwordless" value="no" required>
+            <label class="custom-control-label" for="passwordless_no">No</label>
+          </div>
+          <label class="mb-3" for="current_password">Current Password:</label>
+          <input class="form-control" type="password" id="current_password" name="current_password" minlength="8" required>
+          <input type="submit" value="Submit">
+          <input type="reset" value="Clear">
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <form action="/post_auth/user/me" method = 'post' class="was-validated">
+        <fieldset class="border p-4">
+          <legend class="w-auto mb-n2">Delete account:</legend>
+          <input type="hidden" name="_method" value="delete">
+          <p class="text-center my-3" ><strong>Note:</strong> Will also delete your hosted parties.</p>
+          <label for="current_password mb-3">Current Password:</label>
+          <input class="form-control" type="password" id="current_password" name="current_password" minlength="8" required>
+          <%# checkbox only used for conformation on webpage %>
+          <div class="custom-control custom-checkbox my-3">
+            <input type="checkbox" id="_i_am_sure" name="_i_am_sure" class="custom-control-input" required >
+            <label class="custom-control-label" for="_i_am_sure">Deletion is not reversible</label>
+          </div>
+          <input type="submit" value="Delete My Account!">
+        </fieldset>
+      </form>
+    </div>
+  </div>
 </main>
