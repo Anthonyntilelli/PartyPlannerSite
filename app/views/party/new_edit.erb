@@ -84,20 +84,19 @@
       </div>
     </div>
   </form>
-  <hr>
   <% # Delete party only needed for edit %>
   <%if @party.id%>
+    <hr>
     <div class="row mb-3">
       <div class="col-sm-12">
         <form action="/post_auth/party/<%=@party.id%>" method = 'post'>
-          <fieldset>
-            <legend class="text-center">Delete Party:</legend>
+          <fieldset class="border px-4 py-2">
+            <legend class="text-center w-auto">Delete Party:</legend>
             <input type="hidden" name="_method" value="delete">
             <%# checkbox only used for conformation on webpage %>
-            <div class="custom-control custom-checkbox">
+            <div class="custom-control custom-checkbox mb-4">
               <input type="checkbox" id="_i_am_sure" name="_i_am_sure" class="custom-control-input" required >
               <label class="custom-control-label" for="_i_am_sure">Deletion is not reversible</label>
-
             </div>
             <input type="submit" value="Delete party: <%=@party.name%>">
           </fieldset>

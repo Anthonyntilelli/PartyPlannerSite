@@ -51,8 +51,8 @@
                 <li class="nav-item"><a class="nav-link" href="/post_auth/user/me">User Settings</a></li>
               <%end%>
               <% if session['admin'] == 'yes' %>
-                <li class="nav-item"><a class="nav-link" href="/admin/venue">Admin Venues</a></li>
-                <li class="nav-item"><a class="nav-link" href="/admin/theme">Admin Themes</a></li>
+                <li class="nav-item"><a class="nav-link text-danger" href="/admin/venue">Admin Venues</a></li>
+                <li class="nav-item"><a class="nav-link text-danger" href="/admin/theme">Admin Themes</a></li>
               <% end %>
               <% login_link = session['user_id'] ? '/logout' : '/pre_auth/login' %>
               <% login_text = session['user_id'] ? 'Logout' : 'Login or Signup' %>
@@ -64,6 +64,7 @@
 
       <%= yield %>
 
+      <hr>
       <div class="row mb-3">
         <div class="col-sm-12 text-center" ><small>&copy; 2020 <strong>PartyPlanner Inc.</strong></small></div>
       </div>
