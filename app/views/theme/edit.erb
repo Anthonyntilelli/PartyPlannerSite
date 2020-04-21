@@ -8,6 +8,12 @@
 
   <div class="row mb-3">
     <div class="col-sm-12">
+      <p class="text-center"><strong>Note: </strong>Making a theme inactive will not remove it from exiting parties</p>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm-12">
       <form action="/admin/theme/<%=@theme.id%>/name" method = 'post' class="was-validated">
         <fieldset class="border p-4">
           <legend class="w-auto">Modify Name:</legend>
@@ -46,22 +52,6 @@
     </div>
   </div>
 
-  <div class="row mb-3">
-    <div class="col-sm-12">
-      <form action="/admin/theme/<%=@theme.id%>" method = 'post' class="was-validated">
-        <fieldset class="border px-4 py-2">
-          <legend class="w-auto">Delete Theme:</legend>
-          <input type="hidden" name="_method" value="delete">
-          <%# checkbox only used for conformation on webpage %>
-          <div class="custom-control custom-checkbox mb-4 mt-n4 pt-n2">
-            <input type="checkbox" class="custom-control-input" id="i_am_sure" name="i_am_sure" required ><br>
-            <label class="custom-control-label" for="i_am_sure"> Deletion is not reversible: </label>
-          </div>
-          <input type="submit" value="Delete theme <%=@theme.name%>">
-        </fieldset>
-      </form>
-    </div>
-  </div>
   <div class='row mb-3'>
     <div class="col-sm-12"><a href="/admin/theme">Return to Themes list</a></div>
   </div>

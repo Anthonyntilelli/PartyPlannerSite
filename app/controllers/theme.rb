@@ -47,14 +47,7 @@ class ThemeController < ApplicationController
     redirect to "/admin/theme/#{params['id']}", 200
   end
 
-  # delete theme
-  delete '/admin/theme/:id' do
-    @theme = get_theme(params['id'])
-    @theme.destroy
-
-    flash['alert-success'] = 'Theme removed.'
-    redirect to '/admin/theme', 200
-  end
+  # Cannot delete themes only make inactive, themes are used by parties.
 
   helpers do
     # Finds theme based on Id or redirects to admin base page
