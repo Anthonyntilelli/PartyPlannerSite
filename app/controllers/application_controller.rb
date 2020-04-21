@@ -48,5 +48,10 @@ class ApplicationController < Sinatra::Base
       flash['alert-danger'] = 'Hmac failure, Please try again later'
       redirect to '/', 403
     end
+
+    def delete_your_parties(party)
+      party.invites.destroy_all # Remove related invites
+      party.destroy # Delete party
+    end
   end
 end

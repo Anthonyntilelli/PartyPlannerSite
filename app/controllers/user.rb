@@ -85,6 +85,8 @@ class UserController < ApplicationController
   delete '/post_auth/user/me' do
     @user = load_user_from_session
     require_reauthenticate
+    # Also deletes all user hosted parties
+    @user.parties.each { |party| delete_your_parties(party) unless party.nil? }
     @user.destroy
     session.clear
     flash['alert-success'] = 'User Account Removed.'
