@@ -14,13 +14,11 @@
       <h3 class="text-center"><%=top_title%></h3>
     </div>
   </div>
-
   <div class="row mb-3">
     <div class="col-sm-12">
       <p class="text-center"><strong>Note: </strong>Making a Venue inactive will not remove it from exiting parties.</p>
     </div>
   </div>
-
   <form action="/admin/venue/<%=id%>" method = 'post' class="was-validated">
     <%if @venue.id # 'post' on new and 'patch' on edit%>
       <input type="hidden" name="_method" value="patch">
@@ -80,7 +78,6 @@
       </div>
     </div>
   </form>
-
   <div class="row mb-3">
     <div class="col-sm-12"><a href="/admin/venue">Return to Venue list</a></div>
   </div>
