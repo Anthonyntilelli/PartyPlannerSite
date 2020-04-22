@@ -1,53 +1,87 @@
 <%if @venue.id%>
   <% top_title = "Edit Venue: #{@venue.name}" %>
-  <% confirm = "Confirm Edits to venue:" %>
+  <% confirm = "Confirm Edits to venue" %>
   <% id = @venue.id.to_s %>
 <%else%>
    <% top_title = "New Venue" %>
-   <% confirm = "Confirm creation of new venue:" %>
+   <% confirm = "Confirm creation of new venue" %>
    <% id = 'new' %>
 <%end%>
 
 <main class="container">
-  <h2><%= top_title %></h2>
-  <br>
-  <form action="/admin/venue/<%=id%>" method = 'post'>
-    <fieldset>
-      <legend>Venue Details:</legend>
-      <%if @venue.id # 'post' on new and 'patch' on edit%>
-        <input type="hidden" name="_method" value="patch">
-      <%end%>
-      <label for="venue_name">Name:</label><br>
-      <input type="text" id="venue_name" name="venue_name" value="<%=@venue.name%>" title="Name of Venue" required><br>
-      <br>
-      <label for="venue_zipcode">Zipcode:</label><br>
-      <input type="text" id="venue_zipcode" name="venue_zipcode" value="<%=@venue.zipcode%>" pattern="[0-9]{5}" title="Five digit zip code" required><br>
-      <br>
-      <label for="venue_state">State:</label><br>
-      <input type="text" id="venue_state" name="venue_state" value="<%=@venue.state%>" pattern="[A-Z]{2}" title="2 Letter State Short Code" required><br>
-      <br>
-      <label for="venue_city">City:</label><br>
-      <input type="text" id="venue_city" name="venue_city" value="<%=@venue.city%>" minlength="2" maxlength="50" title="City" required><br>
-      <br>
-      <label for="venue_street_addr">Street Address:</label><br>
-      <input type="text" id="venue_street_addr" name="venue_street_addr" value="<%=@venue.street_addr%>" title="Venue Street address" required><br>
-      <br>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <h3 class="text-center"><%=top_title%></h3>
+    </div>
+  </div>
 
-      <div>
-        <input type="radio" id="active_yes" name="active" value="yes" <%= @venue.active ? "checked" : "" %> required>
-        <label for="active_yes">Active</label><br>
-        <input type="radio" id="active_no" name="active" value="no" <%= @venue.active ? "" : "checked" %> required>
-        <label for="active_no">Inactive</label>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <p class="text-center"><strong>Note: </strong>Making a Venue inactive will not remove it from exiting parties.</p>
+    </div>
+  </div>
+
+  <form action="/admin/venue/<%=id%>" method = 'post' class="was-validated">
+    <%if @venue.id # 'post' on new and 'patch' on edit%>
+      <input type="hidden" name="_method" value="patch">
+    <%end%>
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <label for="venue_name">Venue Name:</label>
+        <input class="form-control" type="text" id="venue_name" name="venue_name" value="<%=@venue.name%>" title="Name of Venue" required>
       </div>
-      <br>
-
-      <%# checkbox only used on webpage %>
-      <label for="update_check"> <%=confirm%> </label>
-      <input type="checkbox" id="update_check" name="update_check" required ><br>
-      <input type="submit" value="Submit">
-      <input type="reset" value="Reset">
-    </fieldset>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-6">
+        <label for="venue_street_addr">Street Address:</label>
+        <input class="form-control" type="text" id="venue_street_addr" name="venue_street_addr" value="<%=@venue.street_addr%>" title="Venue Street address" required>
+      </div>
+      <div class="col-sm-6">
+        <label for="venue_city">City:</label>
+        <input class="form-control" type="text" id="venue_city" name="venue_city" value="<%=@venue.city%>" minlength="2" maxlength="50" title="City" required>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-6">
+        <label for="venue_zipcode">Zipcode:</label>
+        <input class="form-control" type="text" id="venue_zipcode" name="venue_zipcode" value="<%=@venue.zipcode%>" pattern="[0-9]{5}" title="Five digit zip code" required>
+      </div>
+      <div class="col-sm-6">
+      <label for="venue_state">State:</label>
+      <input class="form-control" type="text" id="venue_state" name="venue_state" value="<%=@venue.state%>" pattern="[A-Z]{2}" title="2 Letter State Short Code" required>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-1">
+        <p>State:</p>
+      </div>
+      <div class="col-sm-5">
+        <div class="custom-control custom-radio custom-control-inline">
+          <input class="custom-control-input" type="radio" id="active_yes" name="active" value="yes" <%= @venue.active ? "checked" : "" %> required>
+          <label class="custom-control-label" for="active_yes">Active</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input class="custom-control-input" type="radio" id="active_no" name="active" value="no" <%= @venue.active ? "" : "checked" %> required>
+          <label class="custom-control-label" for="active_no">Inactive</label>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <%# checkbox only used on webpage %>
+        <div class="custom-control custom-switch">
+          <input class="custom-control-input" type="checkbox" id="update_check" name="update_check" required>
+          <label class="custom-control-label" for="update_check"><%=confirm%></label>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <input class="mr-2" type="submit" value="Submit">
+        <input type="reset" value="Reset">
+      </div>
+    </div>
   </form>
-  <br>
-  <p><a href="/admin/venue">Return to Venue list</a></p>
+
+  <div class="row mb-3">
+    <div class="col-sm-12"><a href="/admin/venue">Return to Venue list</a></div>
+  </div>
 </main>
