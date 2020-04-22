@@ -8,7 +8,7 @@
    <% id = 'new' %>
 <%end%>
 
-<main>
+<main class="container">
   <h2><%= top_title %></h2>
   <br>
   <form action="/admin/venue/<%=id%>" method = 'post'>
@@ -48,22 +48,6 @@
       <input type="reset" value="Reset">
     </fieldset>
   </form>
-
-  <% # Delete venue only needed for edit %>
-  <%if @venue.id%>
-    <br>
-    <% # Delete venue%>
-    <form action="/admin/venue/<%=id%>" method = 'post'>
-      <fieldset>
-        <legend>Delete Theme:</legend>
-        <input type="hidden" name="_method" value="delete">
-        <%# checkbox only used for conformation on webpage %>
-        <label for="i_am_sure"> Deletion is not reversible: </label>
-        <input type="checkbox" id="i_am_sure" name="i_am_sure" required ><br>
-        <input type="submit" value="Delete theme <%=@venue.name%>">
-      </fieldset>
-    </form>
-  <%end%>
-
+  <br>
   <p><a href="/admin/venue">Return to Venue list</a></p>
 </main>

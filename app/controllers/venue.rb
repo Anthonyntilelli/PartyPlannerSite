@@ -56,18 +56,12 @@ class VenueController < ApplicationController
     end
   end
 
-  # Delete Venue
-  delete '/admin/venue/:id' do
-    venue = get_venue(params['id'])
-    venue.destroy
-    flash['alert-success'] = "Venue: #{venue.name} Deleted"
-    redirect to '/admin/venue', 200
-  end
-
   # show venue info
   get '/venue' do
     erb :'venue/view'
   end
+
+  # Cannot delete venue only make inactive, venue are used by parties.
 
   helpers do
     # Finds theme based on Id or redirects to admin base page
