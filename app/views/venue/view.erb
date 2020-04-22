@@ -1,13 +1,15 @@
 <main class="container">
   <h2>Best places to party!</h2>
   <% Venue.all.each do |venue| %>
-    <% next unless venue.active  %>
+
     <dl>
+      <% next unless venue.active  %>
       <dt><%=venue.name%></dt>
-      <dd>Location: <%= venue.street_addr %></dd>
-      <dd>City: <%=venue.city%></dd>
-      <dd>State: <%=venue.state%></dd>
-      <dd>ZipCode: <%=venue.zipcode%></dd>
+      <dd>-> Location: <%= venue.street_addr %></dd>
+      <dd>-> City: <%=venue.city%></dd>
+      <dd>-> State: <%=venue.state%></dd>
+      <dd>-> ZipCode: <%=venue.zipcode%></dd>
+      <% end %>
     </dl>
-  <% end %>
+
 </main>
