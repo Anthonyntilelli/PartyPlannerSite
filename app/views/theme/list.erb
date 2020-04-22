@@ -4,7 +4,6 @@
       <h3 class="text-center">Theme Admin Page</h3>
     </div>
   </div>
-
   <div class="row mb-3">
     <div class="col-sm-12">
       <form action="/admin/theme" method='post' class="was-validated">
@@ -19,25 +18,32 @@
       </form>
     </div>
   </div>
-
-  <h3>Theme List Page</h3>
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Edit</th>
-      </tr>
-    </thead>
-    <tbody>
-    <% Theme.all.each do |theme| %>
-        <%color=theme.active ? 'text-body' : 'text-muted'%>
-        <tr class="<%=color%>">
-          <td><%=theme.name%></td>
-          <td><%=theme.active ? 'Active' : 'Inactive'%></td>
-          <td><a href="/admin/theme/<%=theme.id%>"><i class="material-icons">build</i></a></td>
-        </tr>
-      <%end%>
-    </tbody>
-  </table>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <h3 class="text-center">Theme List</h3>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% Theme.all.each do |theme| %>
+            <%color=theme.active ? 'text-body' : 'text-muted'%>
+            <tr class="<%=color%>">
+              <td><%=theme.name%></td>
+              <td><%=theme.active ? 'Active' : 'Inactive'%></td>
+              <td><a href="/admin/theme/<%=theme.id%>"><i class="material-icons">build</i></a></td>
+            </tr>
+          <%end%>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </main>

@@ -53,3 +53,4 @@ Finer grain control permission are handles in controllers.
 
 - Sinatra Template provided by https://github.com/thebrianemory/corneal
 - Favicon provided by https://www.freefavicon.com
+- Frontend Powered by https://getbootstrap.com
