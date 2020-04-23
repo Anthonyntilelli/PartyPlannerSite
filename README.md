@@ -1,9 +1,9 @@
 # PartyPlannerSite
 
 Sinatra powered site for planning events and inviting other users.
-This is the second Learn.co project for flatiron bootcamp.
+This is the second Learn.co project for flatiron boot camp.
 
-## Install from Source
+## Install
 
 Project is installed via [Bundler](https://bundler.io/)
 Project is coded for development mode
@@ -51,6 +51,7 @@ Finer grain control permission are handles in controllers.
 
 ## Thanks to
 
-- Sinatra Template provided by https://github.com/thebrianemory/corneal
-- Favicon provided by https://www.freefavicon.com
-- Frontend Powered by https://getbootstrap.com
+- Sinatra Template provided by (Corneal)[https://github.com/thebrianemory/corneal] gem
+- Favicon provided by (freefavicon)[https://www.freefavicon.com]
+- Frontend powered by (bootstrap)[https://getbootstrap.com]
+- Backend powered by (Sinatra)[http://sinatrarb.com/] and (Active Record)[https://guides.rubyonrails.org/active_record_basics.html]
