@@ -16,6 +16,10 @@ class ApplicationController < Sinatra::Base
     erb :welcome
   end
 
+  not_found do
+    erb :not_found
+  end
+
   helpers do
     # Load user & returns user from session id
     def load_user_from_session
