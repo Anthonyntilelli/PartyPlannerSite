@@ -1,15 +1,43 @@
+<%active_venues = Venue.all.select { |venue| venue.active }%>
 <main class="container">
-  <h2>Best places to party!</h2>
-  <% Venue.all.each do |venue| %>
-
-    <dl>
-      <% next unless venue.active  %>
-      <dt><%=venue.name%></dt>
-      <dd>-> Location: <%= venue.street_addr %></dd>
-      <dd>-> City: <%=venue.city%></dd>
-      <dd>-> State: <%=venue.state%></dd>
-      <dd>-> ZipCode: <%=venue.zipcode%></dd>
-      <% end %>
-    </dl>
-
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <h3 class="text-center">Best places to party!</h3>
+    </div>
+  </div>
+  <%unless active_venues.empty?%>
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <table class="table table-striped table-hover mt-1">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Location</th>
+              <th>City</th>
+              <th>State</th>
+              <th>ZipCode</th>
+            </tr>
+          </thead>
+          <tbody>
+              <%active_venues.each do |venue|%>
+              <%next unless venue.active %>
+              <tr>
+                <td><%=venue.name%></td>
+                <td><%= venue.street_addr %></td>
+                <td><%=venue.city%></td>
+                <td><%=venue.state%></td>
+                <td><%=venue.zipcode%></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <%else%>
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <h3 class="text-center"> <i class="material-icons">sentiment_very_dissatisfied</i> There are no available  venues at this time.</h3>
+      </div>
+    </div>
+  <%end%>
 </main>
