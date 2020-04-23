@@ -14,14 +14,7 @@ gem 'thin'
 
 group :development do
   gem 'pry'
+  gem 'rubocop'
   gem 'shotgun'
   gem 'tux'
-end
-
-group :test do
-  gem 'capybara'
-  gem 'rack-test'
-  gem 'rspec'
-  gem 'rubocop'
-  # gem 'database_cleaner', git: 'https://github.com/bmabey/database_cleaner.git'
 end

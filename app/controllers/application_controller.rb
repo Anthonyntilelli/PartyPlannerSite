@@ -6,17 +6,18 @@ class ApplicationController < Sinatra::Base
     set :public_folder, 'public'
     set :views, 'app/views'
     enable :sessions
-    set :session_secret, ENV['SESSION_KEY']
+    set :session_secret, ENV['PARTY_SESSION_KEY']
     register Sinatra::Flash
     use Rack::MethodOverride
+    #  set :show_exceptions, false
   end
 
   get '/' do
     erb :welcome
   end
 
-  get '/pry' do
-    binding.pry
+  not_found do
+    erb :not_found
   end
 
   helpers do
@@ -40,7 +41,7 @@ class ApplicationController < Sinatra::Base
       return if session['passed_hmac'] == params['salt']
 
       session.clear
-      flash[:ERROR] = 'Hmac validation error'
+      flash['alert-danger'] = 'Hmac validation error'
       redirect to '/', 403
     end
 
@@ -48,8 +49,13 @@ class ApplicationController < Sinatra::Base
       return if id.to_i == user.id
 
       session.clear
-      flash[ERROR] = 'Hmac failure, Please try again later'
+      flash['alert-danger'] = 'Hmac failure, Please try again later'
       redirect to '/', 403
+    end
+
+    def delete_your_parties(party)
+      party.invites.destroy_all # Remove related invites
+      party.destroy # Delete party
     end
   end
 end

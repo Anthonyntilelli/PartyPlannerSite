@@ -9,6 +9,7 @@
 /test/tmp/
 /test/version_tmp/
 /tmp/
+.vscode/
 
 # Used by dotenv library to load environment variables.
 # .env
@@ -59,4 +60,4 @@ build-iPhoneSimulator/
 *.sqlite
 
 # env
-sinatra.env
+party.env

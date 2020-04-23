@@ -1,28 +1,49 @@
-<main>
-  <h2>Theme Admin Page</h2>
-
-  <form action="/admin/theme" method = 'post'>
-    <fieldset>
-      <legend>Add Theme:</legend>
-      <label for="new_name">New Name:</label><br>
-      <input type="text" id="new_name" name="new_name" title="Enter Theme name here" required><br>
-      <input type="submit" value="Create theme">
-    </fieldset>
-  </form>
-
-  <h3>Theme List Page</h3>
-  <table>
-    <tr>
-      <th>Name</th>
-      <th>Status</th>
-      <th>Modify/Delete</th>
-    </tr>
-    <% Theme.all.each do |theme| %>
-      <tr>
-        <td><%=theme.name%></td>
-        <td><%=theme.active ? 'Active' : 'Inactive'%></td>
-        <td><a href="/admin/theme/<%=theme.id%>"> Edit </a></td>
-      </tr>
-    <% end %>
-  </table>
+<main class="container">
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <h3 class="text-center">Theme Admin Page</h3>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <form action="/admin/theme" method='post' class="was-validated">
+        <fieldset class="border px-4 py-2">
+          <legend class="w-auto">Add Theme:</legend>
+          <div class="form-group">
+            <label for="new_name">New Theme Name:</label>
+            <input type="text" class="form-control" id="new_name" name="new_name" title="Enter Theme name here" required>
+          </div>
+          <input type="submit" value="Create theme">
+        </fieldset>
+      </form>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <h3 class="text-center">Theme List</h3>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% Theme.all.each do |theme| %>
+            <%color=theme.active ? 'text-body' : 'text-muted'%>
+            <tr class="<%=color%>">
+              <td><%=theme.name%></td>
+              <td><%=theme.active ? 'Active' : 'Inactive'%></td>
+              <td><a href="/admin/theme/<%=theme.id%>"><i class="material-icons">build</i></a></td>
+            </tr>
+          <%end%>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </main>

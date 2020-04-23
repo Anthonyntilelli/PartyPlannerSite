@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
   # Ensure provided email domain has MX record
   def check_mx_record
     # Disable dns checks
-    return if ENV['NO_DNS'] == 'true'
+    return if ENV['PARTY_DISABLE_DNS'] == 'YES'
 
     domain = email.split('@').last
     results = Resolv::DNS.open { |dns| dns.getresources(domain, Resolv::DNS::Resource::IN::MX) }

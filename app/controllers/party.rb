@@ -2,7 +2,7 @@
 
 # Party controller with Sinatra
 class PartyController < ApplicationController
-  # List all parties user created (TODO: Invites)
+  # List all parties user created
   get '/post_auth/party' do
     @user = load_user_from_session
     # Parties user is hosting
@@ -31,10 +31,10 @@ class PartyController < ApplicationController
         time_slot: params['time_slot']
       )
     rescue ActiveRecord::RecordInvalid => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/post_auth/party/new', 400
     end
-    flash[:SUCCESS] = 'Party Successfully Created: We will see you there!'
+    flash['alert-success'] = 'Party Successfully Created: We will see you there!'
     redirect to '/post_auth/party'
   end
 
@@ -56,10 +56,10 @@ class PartyController < ApplicationController
         event_date: params['partydate'], # yyyy-mm-dd
         time_slot: params['time_slot']
       )
-      flash[:SUCCESS] = "Party Updated: #{@party.name}"
+      flash['alert-success'] = "Party Updated: #{@party.name}"
       redirect to "/post_auth/party/#{@party.id}"
     rescue ActiveRecord::RecordInvalid => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to "post_auth/party/#{params['party_id']}", 400
     end
   end
@@ -67,14 +67,12 @@ class PartyController < ApplicationController
   # Delete party and related invites and gifts
   delete '/post_auth/party/:party_id' do
     load_user_and_party
-    @party.invites.destroy_all # Remove related invites
-    @party.gifts.destroy_all # Remove related gifts
-    @party.destroy # Delete party
-    flash[:SUCCESS] = 'Party removed.'
+    delete_your_parties(@party)
+    flash['alert-success'] = 'Party removed.'
     redirect to '/post_auth/party', 200
   end
 
-  # ---- Invites ----
+  # ---- Party Invites ----
 
   # Manage Invites
   get '/post_auth/party/:party_id/invites' do
@@ -90,15 +88,15 @@ class PartyController < ApplicationController
       invited_user = load_user_from_params_email
     rescue ActiveRecord::RecordNotFound
       invited_user = nil
-      flash[:ERROR] = 'Invited person does not have an account. Please try again, once they have an account.'
+      flash['alert-danger'] = 'Invited person does not have an account. Please try again, once they have an account.'
     end
     if invited_user
       begin
         invite = Invite.create!(user: invited_user, party: @party, status: 'pending')
-        flash[:SUCCESS] = "Invite sent to #{invite.user.name}"
+        flash['alert-success'] = "Invite sent to #{invite.user.name}"
         exit_code = 200
       rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
+        flash['alert-danger'] = e.message
       end
     end
     redirect to "/post_auth/party/#{@party.id}/invites", exit_code
@@ -112,19 +110,19 @@ class PartyController < ApplicationController
     begin
       @invite = Invite.find_by_id!(params['invite_id'])
     rescue ArgumentError, ActiveRecord::RecordNotFound
-      flash[:ERROR] = 'Invite Invalid.'
+      flash['alert-danger'] = 'Invite Invalid.'
     end
     if @invite&.status == 'pending'
       begin
         @invite.update!(status: params['action'])
-        flash[:SUCCESS] = "Invite #{params['action']}."
+        flash['alert-success'] = "Invite #{params['action']}."
         exit_code = 200
       rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
+        flash['alert-danger'] = e.message
         exit_code = 400
       end
     else
-      flash[:ERROR] = 'Invite is no longer pending.'
+      flash['alert-danger'] = 'Invite is no longer pending.'
     end
 
     redirect to '/post_auth/party', exit_code
@@ -147,32 +145,8 @@ class PartyController < ApplicationController
       end
 
       # Not allowed
-      flash[:ERROR] = 'Invalid Party'
+      flash['alert-danger'] = 'Invalid Party'
       redirect to '/', 404
-    end
-
-    # Converts time code number into proper time of day
-    def time_slot_to_date(time_slot)
-      case time_slot
-      when 1
-        'Morning'
-      when 2
-        'Afternoon'
-      when 3
-        'Evening'
-      when 4
-        'Latenight'
-      end
-    end
-
-    # Earliest day allowed for new parties
-    def min_date
-      Date.current + Party::MIN_RANGE
-    end
-
-    # Latest day allowed for new parties
-    def max_date
-      Date.current + Party::MAX_RANGE
     end
   end
 end

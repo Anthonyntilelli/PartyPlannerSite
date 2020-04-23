@@ -20,7 +20,7 @@ class AuthController < ApplicationController
     halt 403, 'Hmac path only supports GET verb' if request.env['REQUEST_METHOD'] != 'GET'
 
     unless HmacUtils.valid_get_url?(url, request.query_string)
-      flash[:ERROR] = 'Invalid Link or Expired'
+      flash['alert-danger'] = 'Invalid Link or Expired'
       redirect to '/', 403
     end
     session['passed_hmac'] = params['salt']
@@ -32,7 +32,7 @@ class AuthController < ApplicationController
     return if User.find_by_id(session[:user_id]).admin
 
     session['admin'] = 'no' # remove admin tag if not allowed
-    flash[:ERROR] = 'Only admin allowed on this page'
+    flash['alert-danger'] = 'Only admin allowed on this page'
     redirect to '/', 403
   end
 
@@ -52,7 +52,7 @@ class AuthController < ApplicationController
     save_user_id_to_session(user) if user&.authenticate(params['password'])
 
     session.delete('user_id')
-    flash[:ERROR] = 'Incorrect User or Password' unless flash[:Error]
+    flash['alert-danger'] = 'Incorrect User or Password' unless flash['alert-danger']
     redirect to '/pre_auth/login', 403
   end
 
@@ -74,13 +74,13 @@ class AuthController < ApplicationController
           'Time to Party: Login Link to you user account.', # subject
           (erb :'email/passwordless_login', layout: false) # body
         )
-        flash[:SUCCESS] = 'Please see email for access link'
+        flash['alert-success'] = 'Please see email for access link'
         redirect to '/', 200
       end
-      flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
+      flash['alert-danger'] = 'Account is locked, please click \'Forgot my password\' to unlock'
     end
     session.delete('user_id')
-    flash[:ERROR] = 'Incorrect User or Passwordless not allowed on that user.' unless flash[:ERROR]
+    flash['alert-danger'] = 'Incorrect User or Passwordless not allowed on that user.' unless flash['alert-danger']
     redirect to '/pre_auth/login/passwordless', 403
   end
 
@@ -93,14 +93,14 @@ class AuthController < ApplicationController
     save_user_id_to_session(@user) if @user&.allow_passwordless
 
     # passwordless not allowed
-    flash[ERROR] = 'Passwordless login failure, Please try again later'
+    flash['alert-danger'] = 'Passwordless login failure, Please try again later'
     redirect to '/', 400
   end
 
   # Logout by clearing session
   get '/logout' do
     session.clear
-    flash[:SUCCESS] = 'You are Logged out.'
+    flash['alert-success'] = 'You are Logged out.'
     redirect to '/', 200
   end
 
@@ -112,7 +112,7 @@ class AuthController < ApplicationController
         session['admin'] = user.admin ? 'yes' : 'no'
         redirect to '/', 200
       end
-      flash[:ERROR] = 'Account is locked, please click \'Forgot my password\' to unlock'
+      flash['alert-danger'] = 'Account is locked, please click \'Forgot my password\' to unlock'
       session.delete('user_id')
       redirect to '/pre_auth/login', 403
     end
@@ -122,7 +122,7 @@ class AuthController < ApplicationController
       return if session['user_id'] && User.find_by_id(session[:user_id])
 
       session.clear
-      flash[:ERROR] = 'Please log in'
+      flash['alert-danger'] = 'Please log in'
       redirect to '/pre_auth/login', 403
     end
   end

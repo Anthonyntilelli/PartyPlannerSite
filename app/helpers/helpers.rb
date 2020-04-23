@@ -3,14 +3,18 @@
 # Send email using sendgrid
 module EmailUtil
   include SendGrid
-  SG = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
+  SG = SendGrid::API.new(api_key: ENV['PARTY_SENDGRID_API_KEY'])
+  SG_EMAIL = ENV['PARTY_SENDGRID_EMAIL']
   # to_address string email address
   # subject string
   # content string (HTML Status)
   # returns { status code, headers }
   def self.send_email(to_address, subject, body)
+    # Supress Email sents
+    return false if ENV['PARTY_DISABLE_EMAIL']
+
     mail = Mail.new(
-      Email.new(email: 'no_reply@test_email.tilelli.me'), # From
+      Email.new(email: SG_EMAIL), # From
       subject,
       Email.new(email: to_address), # TO
       Content.new(type: 'text/html', value: body) # Email Body
@@ -22,7 +26,7 @@ end
 
 # Create and verift hmac url
 module HmacUtils
-  HMAC_KEY = ENV['HMAC_URl_KEY']
+  HMAC_KEY = ENV['PARTY_HMAC_URl_KEY']
   DIGEST = OpenSSL::Digest.new('sha256')
 
   # path - request.path

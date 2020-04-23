@@ -12,10 +12,10 @@ class ThemeController < ApplicationController
     begin
       @theme = Theme.create!(name: params['new_name'].capitalize, active: true)
     rescue ActiveRecord::RecordInvalid, NotImplementedError => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/admin/theme', 400
     end
-    flash[:SUCCESS] = "Theme: '#{@theme.name}' Created"
+    flash['alert-success'] = "Theme: '#{@theme.name}' Created"
     redirect to "/admin/theme/#{@theme.id}"
   end
 
@@ -32,29 +32,22 @@ class ThemeController < ApplicationController
       case params['field']
       when 'name'
         @theme.update!(name: params['new_name'].capitalize)
-        flash[:SUCCESS] = 'Name update Successfull.'
+        flash['alert-success'] = 'Name update Successfull.'
       when 'active'
         @theme.update!(active: params['active'] == 'yes')
-        flash[:SUCCESS] = 'Active update Successfull.'
+        flash['alert-success'] = 'Active update Successfull.'
       else
         raise NotImplementedError, 'Unknown method, Operation aborted.'
       end
     rescue ActiveRecord::RecordInvalid, NotImplementedError => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to "/admin/theme/#{params['id']}", 400
     end
     @theme.save if @theme.changed?
     redirect to "/admin/theme/#{params['id']}", 200
   end
 
-  # delete theme
-  delete '/admin/theme/:id' do
-    @theme = get_theme(params['id'])
-    @theme.destroy
-
-    flash[:SUCCESS] = 'Theme removed.'
-    redirect to '/admin/theme', 200
-  end
+  # Cannot delete themes only make inactive, themes are used by parties.
 
   helpers do
     # Finds theme based on Id or redirects to admin base page
@@ -63,7 +56,7 @@ class ThemeController < ApplicationController
       return theme if theme
 
       # Not Found
-      flash[:ERROR] = 'Unable to find desired Theme'
+      flash['alert-danger'] = 'Unable to find desired Theme'
       redirect to '/admin/theme', 404
     end
   end

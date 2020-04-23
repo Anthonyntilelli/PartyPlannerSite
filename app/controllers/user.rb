@@ -20,7 +20,8 @@ class UserController < ApplicationController
         locked: true,
         admin: false
       )
-      @verify_link = HmacUtils.gen_url(request.base_url + "/hmac/user/verify/#{user.id}", { 'email' => user.email }, 120)
+      full_url = request.base_url + "/hmac/user/verify/#{user.id}"
+      @verify_link = HmacUtils.gen_url(full_url, { 'email' => user.email }, 120)
       # Send email validation for user account
       EmailUtil.send_email(
         user.email,
@@ -28,10 +29,10 @@ class UserController < ApplicationController
         (erb :'/email/verify_account', layout: false) # Body
       )
     rescue ActiveRecord::RecordInvalid => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/pre_auth/user/signup', 400
     end
-    flash[:SUCCESS] = "Signup Successfull: Welcome #{params['name']}, please view your email for confirm link."
+    flash['alert-success'] = "Signup Successfull: Welcome #{params['name']}, please view your email for confirm link."
     redirect to '/'
   end
 
@@ -43,7 +44,7 @@ class UserController < ApplicationController
 
     user.locked = false if user.locked
     user.save if user.changed?
-    flash[:SUCCESS] = 'Email Verified'
+    flash['alert-success'] = 'Email Verified'
     redirect to '/', 200
   end
 
@@ -60,20 +61,20 @@ class UserController < ApplicationController
       case modify
       when 'name'
         @user.update!(name: params['new_name'])
-        flash[:SUCCESS] = 'Name update Successfull.'
+        flash['alert-success'] = 'Name update Successfull.'
       when 'password'
         require_reauthenticate
         @user.update!(password: params['new_password'], password_confirmation: params['new_confirm_password'])
-        flash[:SUCCESS] = 'Password update Successfull.'
+        flash['alert-success'] = 'Password update Successfull.'
       when 'passwordless'
         require_reauthenticate
         @user.update!(allow_passwordless: params['passwordless'] == 'yes')
-        flash[:SUCCESS] = "Passwordless update to #{@user.allow_passwordless ? 'Enabled' : 'Disabled'}."
+        flash['alert-success'] = "Passwordless update to #{@user.allow_passwordless ? 'Enabled' : 'Disabled'}."
       else
         raise NotImplementedError, 'Unknown method, operation aborted.'
       end
     rescue ActiveRecord::RecordInvalid, NotImplementedError => e
-      flash[:ERROR] = e.message
+      flash['alert-danger'] = e.message
       redirect to '/post_auth/user/me', 400
     end
     @user.save if @user.changed?
@@ -84,9 +85,11 @@ class UserController < ApplicationController
   delete '/post_auth/user/me' do
     @user = load_user_from_session
     require_reauthenticate
+    # Also deletes all user hosted parties
+    @user.parties.each { |party| delete_your_parties(party) unless party.nil? }
     @user.destroy
     session.clear
-    flash[:SUCCESS] = 'User Account Removed.'
+    flash['alert-success'] = 'User Account Removed.'
     redirect to '/', 200
   end
 
@@ -99,7 +102,7 @@ class UserController < ApplicationController
   post '/user/forgot_password' do
     user = wrapped_load_user_from_params_email
     if user.nil?
-      flash[:ERROR] = 'Unknown User'
+      flash['alert-danger'] = 'Unknown User'
       redirect to '/user/forgot_password', 400
     end
     @reset_link = HmacUtils.gen_url(
@@ -110,7 +113,7 @@ class UserController < ApplicationController
     email_body = erb :'email/reset_password', layout: false
     # Send email validation for user account
     EmailUtil.send_email(user.email, 'Party Planner: Password Reset Link.', email_body)
-    flash[:SUCCESS] = 'Reset Password email sent.'
+    flash['alert-success'] = 'Reset Password email sent.'
     redirect to '/', 200
   end
 
@@ -130,7 +133,7 @@ class UserController < ApplicationController
     reset_expire = session.delete('reset_expire')
     # ensure session exist
     if reset_id.nil? || reset_expire.nil?
-      flash[:ERROR] = 'Invalid Reset'
+      flash['alert-danger'] = 'Invalid Reset'
       redirect to '/', 403
     end
     user = User.find_by_id(reset_id)
@@ -143,15 +146,15 @@ class UserController < ApplicationController
           locked: false
         )
       rescue ActiveRecord::RecordInvalid => e
-        flash[:ERROR] = e.message
+        flash['alert-danger'] = e.message
         redirect to '/', 400
       else
         user.save
-        flash[:SUCCESS] = 'Password updated'
+        flash['alert-success'] = 'Password updated'
         redirect to '/'
       end
     end
-    flash[:ERROR] = 'Invalid user or expired link'
+    flash['alert-danger'] = 'Invalid user or expired link'
     redirect to '/', 403
   end
 
@@ -161,7 +164,7 @@ class UserController < ApplicationController
     def require_reauthenticate
       return if @user&.authenticate(params['current_password'])
 
-      flash[:ERROR] = 'Incorrect current password, operation aborted.'
+      flash['alert-danger'] = 'Incorrect current password, operation aborted.'
       redirect to '/post_auth/user/me', 403
     end
   end
