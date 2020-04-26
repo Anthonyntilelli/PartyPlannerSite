@@ -122,7 +122,7 @@ class PartyController < ApplicationController
         exit_code = 400
       end
     else
-      flash['alert-danger'] = 'Invite is no longer pending.'
+      flash['alert-success'] = 'Invite is no longer pending.'
     end
 
     redirect to '/post_auth/party', exit_code
